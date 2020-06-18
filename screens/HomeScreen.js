@@ -1,13 +1,21 @@
 import * as WebBrowser from 'expo-web-browser';
 import * as React from 'react';
-import { Image, Platform, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Image, Platform, StyleSheet, Text, TouchableOpacity, View, FlatList } from 'react-native';
 import { ScrollView } from 'react-native-gesture-handler';
 
 import { MonoText } from '../components/StyledText';
 
 export default function HomeScreen() {
+  new_data = []
+  DATA.forEach(element => {
+    new_data.push({key: element.day + " " + element.was_done});
+  });
   return (
     <View style={styles.container}>
+        <FlatList
+        data={new_data}
+        renderItem={({item}) => <Text>{item.key}</Text>}
+        />
       <ScrollView style={styles.container} contentContainerStyle={styles.contentContainer}>
         <View style={styles.welcomeContainer}>
           <Image
@@ -55,6 +63,15 @@ export default function HomeScreen() {
 HomeScreen.navigationOptions = {
   header: null,
 };
+
+ActivityList = () => {
+  return (
+    <FlatList
+    data={DATA}
+    renderItem={({item}) => <Text>{item['day']}</Text>}
+    />
+  );
+}
 
 function DevelopmentModeNotice() {
   if (__DEV__) {
@@ -177,3 +194,66 @@ const styles = StyleSheet.create({
     color: '#2e78b7',
   },
 });
+
+var DATA = [
+  {
+      "day": "2020-01-12",
+      "was_done": false,
+      "user": "http://localhost:8000/users/1/",
+      "name": "workout"
+  },
+  {
+      "day": "2020-01-19",
+      "was_done": false,
+      "user": "http://localhost:8000/users/1/",
+      "name": "workout"
+  },
+  {
+      "day": "2020-01-26",
+      "was_done": false,
+      "user": "http://localhost:8000/users/1/",
+      "name": "workout"
+  },
+  {
+      "day": "2020-01-28",
+      "was_done": true,
+      "user": "http://localhost:8000/users/1/",
+      "name": "workout"
+  },
+  {
+      "day": "2020-01-29",
+      "was_done": true,
+      "user": "http://localhost:8000/users/1/",
+      "name": "workout"
+  },
+  {
+      "day": "2020-01-31",
+      "was_done": true,
+      "user": "http://localhost:8000/users/1/",
+      "name": "workout"
+  },
+  {
+      "day": "2020-01-06",
+      "was_done": false,
+      "user": "http://localhost:8000/users/1/",
+      "name": "workout"
+  },
+  {
+      "day": "2020-01-08",
+      "was_done": false,
+      "user": "http://localhost:8000/users/1/",
+      "name": "workout"
+  },
+  {
+      "day": "2020-01-09",
+      "was_done": false,
+      "user": "http://localhost:8000/users/1/",
+      "name": "workout"
+  },
+  {
+      "day": "2020-01-10",
+      "was_done": true,
+      "user": "http://localhost:8000/users/1/",
+      "name": "workout"
+  }
+];
