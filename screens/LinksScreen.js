@@ -48,18 +48,10 @@ export default function LinksScreen() {
         var daydiff;
         var msPerDay = 24 * 60 * 60 * 1000;
         
-        if (idx == 0){
-          prev = new Date('1970-01-01');
-        }
-        else {
-          prev = new Date(curr_act_type[idx-1].day);
-        }
-        if (idx == curr_act_type.length -1){
-          next = new Date('1970-01-01');
-        }
-        else {
-          next = new Date(curr_act_type[idx+1].day);
-        }
+        prev = (idx == 0) ? new Date('1970-01-01')
+                          : new Date(curr_act_type[idx-1].day);
+        next = (idx == curr_act_type.length -1) ? new Date('1970-01-01')
+                          : new Date(curr_act_type[idx+1].day);
 
         daydiff = (prev.getTime() - curr.getTime()) / msPerDay;
         if (Math.round(daydiff) != -1){
@@ -153,6 +145,30 @@ if (__TEST__) {
       "was_done": true,
       "user": "http://localhost:8000/users/1/",
       "name": "workout"
+    }, 
+     {
+      "day": "2020-06-10",
+      "was_done": true,
+      "user": "http://localhost:8000/users/1/",
+      "name": "drank_alcohol"
+    },
+    {
+      "day": "2020-06-11",
+      "was_done": true,
+      "user": "http://localhost:8000/users/1/",
+      "name": "drank_alcohol"
+    },
+    {
+      "day": "2020-06-12",
+      "was_done": true,
+      "user": "http://localhost:8000/users/1/",
+      "name": "drank_alcohol"
+    },
+    {
+      "day": "2020-06-16",
+      "was_done": true,
+      "user": "http://localhost:8000/users/1/",
+      "name": "drank_alcohol"
     }
   ]
 }

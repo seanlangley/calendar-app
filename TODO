@@ -1,5 +1,8 @@
-☐ Revert back to period instead of multiple period. Only show one activity type at a time.
-☐ Add a dropdown list to select the activity type you want to view
+✔ Revert back to period instead of multiple period. Only show one activity type at a time. @done(20-06-18 21:44)
+✔ Add a dropdown list to select the activity type you want to view @done(20-06-18 23:50)
+☐ Add a default value for the dropdown
+☐ Change a day's color on press
 ☐ Figure out how the detail view should look
 ☐ Write a serializer on the server to return the analyzed data
 ☐ Make form to create a new activity type
+☐ Add authentication
