@@ -34,27 +34,31 @@ export default function LinksScreen() {
         var is_start_day = false;
         var is_end_day = false;
         var color;
-        var prev, curr, next;
+        var prev, next;
+        var curr = new Date(curr_act_type[idx].day);
         var daydiff;
         var msPerDay = 24 * 60 * 60 * 1000;
+        
         if (idx == 0){
-          is_start_day = true;
-        }
-        else if (idx == curr_act_type.length -1){
-          is_end_day = true;
+          prev = new Date('1970-01-01');
         }
         else {
           prev = new Date(curr_act_type[idx-1].day);
-          curr = new Date(curr_act_type[idx].day);
+        }
+        if (idx == curr_act_type.length -1){
+          next = new Date('1970-01-01');
+        }
+        else {
           next = new Date(curr_act_type[idx+1].day);
-          daydiff = (prev.getTime() - curr.getTime()) / msPerDay;
-          if (Math.round(daydiff) != -1){
-            is_start_day = true;
-          }
-          daydiff = (next.getTime() - curr.getTime()) / msPerDay;
-          if (Math.round(daydiff) != 1){
-            is_end_day = true;
-          }
+        }
+
+        daydiff = (prev.getTime() - curr.getTime()) / msPerDay;
+        if (Math.round(daydiff) != -1){
+          is_start_day = true;
+        }
+        daydiff = (next.getTime() - curr.getTime()) / msPerDay;
+        if (Math.round(daydiff) != 1){
+          is_end_day = true;
         }
         color = act.was_done ? 'green' : 'red';
 
@@ -106,25 +110,6 @@ const styles = StyleSheet.create({
   },
   contentContainer: {
     paddingTop: 15,
-  },
-  optionIconContainer: {
-    marginRight: 12,
-  },
-  option: {
-    backgroundColor: '#fdfdfd',
-    paddingHorizontal: 15,
-    paddingVertical: 15,
-    borderWidth: StyleSheet.hairlineWidth,
-    borderBottomWidth: 0,
-    borderColor: '#ededed',
-  },
-  lastOption: {
-    borderBottomWidth: StyleSheet.hairlineWidth,
-  },
-  optionText: {
-    fontSize: 15,
-    alignSelf: 'flex-start',
-    marginTop: 1,
   },
 });
 
