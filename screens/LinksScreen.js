@@ -15,25 +15,64 @@ export default function LinksScreen() {
   const [isLoading, setLoading] = useState(true);
   const [markedDates, setMarkedDates] = useState({});
 
-
   function initialize_data(data) {
-    marked_dates = {};
-    data.forEach(entry => {
-      periods = [];
-      if (entry.was_done) {
-        periods.push({ color: 'green' });
+    var marked_dates = {};
+    var activity_types = {};
+    data.forEach(act => {
+      if (!(act.name in activity_types)){
+          activity_types[act.name] = [];
       }
-      else {
-        periods.push({color: 'red'});
-      }
-      marked_dates[entry.day] = { periods: periods };
+      activity_types[act.name].push(act);
     });
+
+    Object.keys(activity_types).forEach(act_name => {
+      marked_dates[act_name] = {};
+      var in_streak = false;
+      var curr_act_type = activity_types[act_name];
+
+      curr_act_type.forEach((act, idx) => {
+        var is_start_day = false;
+        var is_end_day = false;
+        var color;
+        var prev, curr, next;
+        var daydiff;
+        var msPerDay = 24 * 60 * 60 * 1000;
+        if (idx == 0){
+          is_start_day = true;
+        }
+        else if (idx == curr_act_type.length -1){
+          is_end_day = true;
+        }
+        else {
+          prev = new Date(curr_act_type[idx-1].day);
+          curr = new Date(curr_act_type[idx].day);
+          next = new Date(curr_act_type[idx+1].day);
+          daydiff = (prev.getTime() - curr.getTime()) / msPerDay;
+          if (Math.round(daydiff) != -1){
+            is_start_day = true;
+          }
+          daydiff = (next.getTime() - curr.getTime()) / msPerDay;
+          if (Math.round(daydiff) != 1){
+            is_end_day = true;
+          }
+        }
+        color = act.was_done ? 'green' : 'red';
+
+        marked_dates[act.name][act.day] = {
+          'color': color,
+          'startingDay': is_start_day,
+          'endingDay': is_end_day
+        };
+      });
+    });
+
     setMarkedDates(marked_dates);
   }
 
 if(__TEST__){
   useEffect(() => {
     initialize_data(DATA);
+    setLoading(false);
   }, []);
 }
 
@@ -51,8 +90,8 @@ else{
     <ScrollView style={styles.container} contentContainerStyle={styles.contentContainer}>
       {isLoading ? <ActivityIndicator /> : (
         <Calendar
-          markedDates={markedDates}
-          markingType={'multi-period'}
+          markedDates={markedDates.workout}
+          markingType={'period'}
         />
       )}
 
