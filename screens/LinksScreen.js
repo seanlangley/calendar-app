@@ -4,6 +4,7 @@ import React, { useEffect, useState } from 'react';
 import { StyleSheet, Text, View, ActivityIndicator } from 'react-native';
 import { RectButton, ScrollView, FlatList } from 'react-native-gesture-handler';
 import { Calendar, CalendarList, Agenda } from 'react-native-calendars';
+import DropDownPicker from 'react-native-dropdown-picker';
 
 var __TEST__ = false;
 var REST_URL;
@@ -12,12 +13,16 @@ if (!__TEST__) {
 }
 
 export default function LinksScreen() {
-  const [isLoading, setLoading] = useState(true);
-  const [markedDates, setMarkedDates] = useState({});
+  const [isLoading, setLoading]         = useState(true);
+  const [markedDates, setMarkedDates]   = useState({});
+  const [dropdownData, setDropdownData] = useState({});
+  const [currDisplay, setCurrDisplay]   = useState("workout");
 
   function initialize_data(data) {
-    var marked_dates = {};
+    var marked_dates   = {};
+    var dropdown_data  = [];
     var activity_types = {};
+
     data.forEach(act => {
       if (!(act.name in activity_types)){
           activity_types[act.name] = [];
@@ -26,6 +31,10 @@ export default function LinksScreen() {
     });
 
     Object.keys(activity_types).forEach(act_name => {
+      dropdown_data.push(
+        {label: act_name}
+      );
+
       marked_dates[act_name] = {};
       var in_streak = false;
       var curr_act_type = activity_types[act_name];
@@ -69,8 +78,8 @@ export default function LinksScreen() {
         };
       });
     });
-
     setMarkedDates(marked_dates);
+    setDropdownData(dropdown_data);
   }
 
 if(__TEST__){
@@ -94,11 +103,17 @@ else{
     <ScrollView style={styles.container} contentContainerStyle={styles.contentContainer}>
       {isLoading ? <ActivityIndicator /> : (
         <Calendar
-          markedDates={markedDates.workout}
+          markedDates={markedDates[currDisplay]}
           markingType={'period'}
+          onDayPress={(day) => {console.log(day)}}
         />
       )}
-
+      {isLoading ? <ActivityIndicator /> : (
+        <DropDownPicker
+          items={dropdownData}
+          onChangeItem={item => setCurrDisplay(item.label)}
+        />
+      )}
     </ScrollView>
   );
 }
