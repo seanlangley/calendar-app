@@ -12,28 +12,42 @@ if (!__TEST__) {
     var REST_URL = 'http://localhost:8000/activities';
 }
 let msPerDay = 24 * 60 * 60 * 1000;
+var activeDays = {}
 
 export default function LinksScreen() {
     const [isLoading, setLoading] = useState(true);
     const [markedDates, setMarkedDates] = useState({});
     const [dropdownData, setDropdownData] = useState({});
     const [currActType, setCurrActType] = useState("workout");
-    const [activeDays, setActiveDays] = useState({});
+
+    function is_start_day(day, act_name){
+        prev = Math.round(day.getTime() - msPerDay);
+        if (activeDays[act_name].indexOf(prev) == -1){
+            return true;
+        }
+        return false;
+    }
+    function is_end_day(day, act_name){
+        var next = Math.round(day.getTime() + msPerDay);
+        if (activeDays[act_name].indexOf(next) == -1){
+            return true;
+        }
+        return false;
+    }
 
     function initialize_data(data) {
         var marked_dates = {};
         var dropdown_data = [];
         var activity_types = {};
-        var active_days = {};
 
         data.forEach(act => {
             var act_type = act.act_type;
             if (!(act_type.name in activity_types)) {
                 activity_types[act_type.name] = [];
-                active_days[act_type.name] = [];
+                activeDays[act_type.name] = [];
             }
             activity_types[act_type.name].push(act);
-            active_days[act_type.name].push(new Date(act.day).getTime());
+            activeDays[act_type.name].push(new Date(act.day).getTime());
         });
 
         Object.keys(activity_types).forEach(act_name => {
@@ -41,27 +55,12 @@ export default function LinksScreen() {
             marked_dates[act_name] = {};
             var curr_act_type = activity_types[act_name];
 
-            function is_start_day(day){
-                prev = Math.round(day - msPerDay);
-                if (active_days[act_name].indexOf(prev) == -1){
-                    return true;
-                }
-                return false;
-            }
-            function is_end_day(day){
-                var next = Math.round(day + msPerDay);
-                if (active_days[act_name].indexOf(next) == -1){
-                    return true;
-                }
-                return false;
-            }
-
             curr_act_type.forEach((act, idx) => {
-                var curr = new Date(curr_act_type[idx].day).getTime();
+                var curr = new Date(curr_act_type[idx].day);
                 marked_dates[act.act_type.name][act.day] = {
                     'color': act.was_done ? 'green' : 'red',
-                    'startingDay': is_start_day(curr),
-                    'endingDay': is_end_day(curr),
+                    'startingDay': is_start_day(curr, act_name),
+                    'endingDay': is_end_day(curr, act_name),
                 };
             });
         });
@@ -103,13 +102,12 @@ export default function LinksScreen() {
                         }
                         var marked_dates = JSON.parse(JSON.stringify(markedDates));
                         var curr_day = marked_dates['workout'][day.dateString]
-                        if (curr_day == undefined){
-                            marked_dates['workout'][day.dateString] = {'color': 'green'};
-                        }
-                        else{
-                            var new_color = transition_color(curr_day.color);
-                            marked_dates['workout'][day.dateString].color = new_color;
-                        }
+                        var date_obj = new Date(day.dateString);
+                        marked_dates['workout'][day.dateString] = {
+                            'color': curr_day == undefined ? 'green' : transition_color(curr_day.color),
+                            'startingDay': is_start_day(date_obj, currActType),
+                            'endingDay': is_end_day(date_obj, currActType),
+                        };
                         setMarkedDates(marked_dates);
                     }}
                 />
