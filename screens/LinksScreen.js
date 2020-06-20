@@ -100,13 +100,24 @@ export default function LinksScreen() {
                     markedDates={markedDates[currDisplay]}
                     markingType={'period'}
                     onDayPress={(day) => {
+                        function transition_color(curr_color){
+                            switch(curr_color){
+                                case 'white':
+                                    return 'green';
+                                case 'green':
+                                    return 'red';
+                                case 'red':
+                                    return 'white'
+                                default:
+                                    console.error("Unhandled color");
+                            }
+                        }
                         var marked_dates = JSON.parse(JSON.stringify(markedDates));
                         var curr_day = marked_dates['workout'][day.dateString]
                         if (curr_day == undefined){
                             return;
                         }
-                        var curr_color = curr_day.color;
-                        var new_color =  curr_color == 'red' ? 'green' : 'red';
+                        var new_color = transition_color(curr_day.color);
                         marked_dates['workout'][day.dateString].color = new_color;
                         setMarkedDates(marked_dates);
                     }}
@@ -120,6 +131,18 @@ export default function LinksScreen() {
             )}
             <Button
             title={isLoading ? "" : "Submit"}
+            onPress={() => {
+                fetch('http://localhost:8000/new_act_app', {
+                    method: 'POST',
+                    headers: {
+                        Accept: 'application/json',
+                        'Content-Type': 'application/json'
+                    },
+                    body: {
+                        hello: 'world'
+                    }
+                });
+            }}
             />
         </ScrollView>
     );
@@ -138,52 +161,59 @@ const styles = StyleSheet.create({
 if (__TEST__) {
     var DATA = [
         {
-            "day": "2020-06-10",
+            "day": "2020-06-19",
             "was_done": true,
-            "user": "http://localhost:8000/users/1/",
-            "name": "workout"
+            "act_type": {
+                "url": "http://localhost:8000/activity_types/2/",
+                "name": "drank_alcohol",
+                "user": "http://localhost:8000/users/1/"
+            }
         },
         {
-            "day": "2020-06-11",
+            "day": "2020-06-20",
             "was_done": true,
-            "user": "http://localhost:8000/users/1/",
-            "name": "workout"
+            "act_type": {
+                "url": "http://localhost:8000/activity_types/1/",
+                "name": "workout",
+                "user": "http://localhost:8000/users/1/"
+            }
         },
         {
-            "day": "2020-06-12",
+            "day": "2020-06-20",
             "was_done": true,
-            "user": "http://localhost:8000/users/1/",
-            "name": "workout"
+            "act_type": {
+                "url": "http://localhost:8000/activity_types/2/",
+                "name": "drank_alcohol",
+                "user": "http://localhost:8000/users/1/"
+            }
         },
         {
-            "day": "2020-06-16",
+            "day": "2020-06-21",
             "was_done": true,
-            "user": "http://localhost:8000/users/1/",
-            "name": "workout"
+            "act_type": {
+                "url": "http://localhost:8000/activity_types/1/",
+                "name": "workout",
+                "user": "http://localhost:8000/users/1/"
+            }
         },
         {
-            "day": "2020-06-10",
+            "day": "2020-06-21",
             "was_done": true,
-            "user": "http://localhost:8000/users/1/",
-            "name": "drank_alcohol"
+            "act_type": {
+                "url": "http://localhost:8000/activity_types/2/",
+                "name": "drank_alcohol",
+                "user": "http://localhost:8000/users/1/"
+            }
         },
         {
-            "day": "2020-06-11",
+            "day": "2020-06-23",
             "was_done": true,
-            "user": "http://localhost:8000/users/1/",
-            "name": "drank_alcohol"
-        },
-        {
-            "day": "2020-06-12",
-            "was_done": true,
-            "user": "http://localhost:8000/users/1/",
-            "name": "drank_alcohol"
-        },
-        {
-            "day": "2020-06-16",
-            "was_done": true,
-            "user": "http://localhost:8000/users/1/",
-            "name": "drank_alcohol"
+            "act_type": {
+                "url": "http://localhost:8000/activity_types/1/",
+                "name": "workout",
+                "user": "http://localhost:8000/users/1/"
+            }
         }
     ]
 }
+
