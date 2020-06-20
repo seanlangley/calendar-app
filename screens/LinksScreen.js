@@ -11,24 +11,29 @@ var REST_URL;
 if (!__TEST__) {
     var REST_URL = 'http://localhost:8000/activities';
 }
+let msPerDay = 24 * 60 * 60 * 1000;
 
 export default function LinksScreen() {
     const [isLoading, setLoading] = useState(true);
     const [markedDates, setMarkedDates] = useState({});
     const [dropdownData, setDropdownData] = useState({});
     const [currActType, setCurrActType] = useState("workout");
+    const [activeDays, setActiveDays] = useState({});
 
     function initialize_data(data) {
         var marked_dates = {};
         var dropdown_data = [];
         var activity_types = {};
+        var active_days = {};
 
         data.forEach(act => {
             var act_type = act.act_type;
             if (!(act_type.name in activity_types)) {
                 activity_types[act_type.name] = [];
+                active_days[act_type.name] = [];
             }
             activity_types[act_type.name].push(act);
+            active_days[act_type.name].push(new Date(act.day).getTime());
         });
 
         Object.keys(activity_types).forEach(act_name => {
@@ -36,32 +41,27 @@ export default function LinksScreen() {
             marked_dates[act_name] = {};
             var curr_act_type = activity_types[act_name];
 
+            function is_start_day(day){
+                prev = Math.round(day - msPerDay);
+                if (active_days[act_name].indexOf(prev) == -1){
+                    return true;
+                }
+                return false;
+            }
+            function is_end_day(day){
+                var next = Math.round(day + msPerDay);
+                if (active_days[act_name].indexOf(next) == -1){
+                    return true;
+                }
+                return false;
+            }
+
             curr_act_type.forEach((act, idx) => {
-                var is_start_day = false;
-                var is_end_day = false;
-                var prev, next;
-                var curr = new Date(curr_act_type[idx].day);
-                var daydiff;
-                var msPerDay = 24 * 60 * 60 * 1000;
-
-                prev = (idx == 0) ? new Date('1970-01-01')
-                    : new Date(curr_act_type[idx - 1].day);
-                next = (idx == curr_act_type.length - 1) ? new Date('1970-01-01')
-                    : new Date(curr_act_type[idx + 1].day);
-
-                daydiff = (prev.getTime() - curr.getTime()) / msPerDay;
-                if (Math.round(daydiff) != -1) {
-                    is_start_day = true;
-                }
-                daydiff = (next.getTime() - curr.getTime()) / msPerDay;
-                if (Math.round(daydiff) != 1) {
-                    is_end_day = true;
-                }
-
+                var curr = new Date(curr_act_type[idx].day).getTime();
                 marked_dates[act.act_type.name][act.day] = {
                     'color': act.was_done ? 'green' : 'red',
-                    'startingDay': is_start_day,
-                    'endingDay': is_end_day
+                    'startingDay': is_start_day(curr),
+                    'endingDay': is_end_day(curr),
                 };
             });
         });
