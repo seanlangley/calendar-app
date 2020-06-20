@@ -98,10 +98,11 @@ export default function LinksScreen() {
                     markedDates={markedDates[currDisplay]}
                     markingType={'period'}
                     onDayPress={(day) => {
-                        marked_dates = markedDates;
-                        marked_dates['workout']['2020-06-19'].color = 'red';
+                        var marked_dates = JSON.parse(JSON.stringify(markedDates));
+                        var curr_color = marked_dates['workout'][day.dateString].color;
+                        var new_color =  curr_color == 'red' ? 'green' : 'red';
+                        marked_dates['workout'][day.dateString].color = new_color;
                         setMarkedDates(marked_dates);
-                        return;
                     }}
                 />
             )}
