@@ -16,7 +16,7 @@ export default function LinksScreen() {
     const [isLoading, setLoading] = useState(true);
     const [markedDates, setMarkedDates] = useState({});
     const [dropdownData, setDropdownData] = useState({});
-    const [currDisplay, setCurrDisplay] = useState("workout");
+    const [currActType, setCurrActType] = useState("workout");
 
     function initialize_data(data) {
         var marked_dates = {};
@@ -39,7 +39,6 @@ export default function LinksScreen() {
             curr_act_type.forEach((act, idx) => {
                 var is_start_day = false;
                 var is_end_day = false;
-                var color;
                 var prev, next;
                 var curr = new Date(curr_act_type[idx].day);
                 var daydiff;
@@ -58,10 +57,9 @@ export default function LinksScreen() {
                 if (Math.round(daydiff) != 1) {
                     is_end_day = true;
                 }
-                color = act.was_done ? 'green' : 'red';
 
                 marked_dates[act.act_type.name][act.day] = {
-                    'color': color,
+                    'color': act.was_done ? 'green' : 'red',
                     'startingDay': is_start_day,
                     'endingDay': is_end_day
                 };
@@ -92,7 +90,7 @@ export default function LinksScreen() {
         <ScrollView style={styles.container} contentContainerStyle={styles.contentContainer}>
             {isLoading ? <ActivityIndicator /> : (
                 <Calendar
-                    markedDates={markedDates[currDisplay]}
+                    markedDates={markedDates[currActType]}
                     markingType={'period'}
                     onDayPress={(day) => {
                         function transition_color(curr_color){
@@ -119,7 +117,7 @@ export default function LinksScreen() {
             {isLoading ? <ActivityIndicator /> : (
                 <DropDownPicker
                     items={dropdownData}
-                    onChangeItem={item => setCurrDisplay(item.label)}
+                    onChangeItem={item => setCurrActType(item.label)}
                 />
             )}
             <Button
