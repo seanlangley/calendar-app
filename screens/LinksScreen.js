@@ -1,7 +1,7 @@
 import { Ionicons } from '@expo/vector-icons';
 import * as WebBrowser from 'expo-web-browser';
 import React, { useEffect, useState } from 'react';
-import { StyleSheet, Text, View, ActivityIndicator } from 'react-native';
+import { Button, StyleSheet, Text, View, ActivityIndicator } from 'react-native';
 import { RectButton, ScrollView, FlatList } from 'react-native-gesture-handler';
 import { Calendar, CalendarList, Agenda } from 'react-native-calendars';
 import DropDownPicker from 'react-native-dropdown-picker';
@@ -17,17 +17,20 @@ export default function LinksScreen() {
     const [markedDates, setMarkedDates] = useState({});
     const [dropdownData, setDropdownData] = useState({});
     const [currDisplay, setCurrDisplay] = useState("workout");
+    const [actData, setActData] = useState([]);
 
     function initialize_data(data) {
         var marked_dates = {};
         var dropdown_data = [];
         var activity_types = {};
 
+        setActData(data);
         data.forEach(act => {
-            if (!(act.name in activity_types)) {
-                activity_types[act.name] = [];
+            var act_type = act.act_type;
+            if (!(act_type.name in activity_types)) {
+                activity_types[act_type.name] = [];
             }
-            activity_types[act.name].push(act);
+            activity_types[act_type.name].push(act);
         });
 
         Object.keys(activity_types).forEach(act_name => {
@@ -36,7 +39,6 @@ export default function LinksScreen() {
             );
 
             marked_dates[act_name] = {};
-            var in_streak = false;
             var curr_act_type = activity_types[act_name];
 
             curr_act_type.forEach((act, idx) => {
@@ -63,7 +65,7 @@ export default function LinksScreen() {
                 }
                 color = act.was_done ? 'green' : 'red';
 
-                marked_dates[act.name][act.day] = {
+                marked_dates[act.act_type.name][act.day] = {
                     'color': color,
                     'startingDay': is_start_day,
                     'endingDay': is_end_day
@@ -99,7 +101,11 @@ export default function LinksScreen() {
                     markingType={'period'}
                     onDayPress={(day) => {
                         var marked_dates = JSON.parse(JSON.stringify(markedDates));
-                        var curr_color = marked_dates['workout'][day.dateString].color;
+                        var curr_day = marked_dates['workout'][day.dateString]
+                        if (curr_day == undefined){
+                            return;
+                        }
+                        var curr_color = curr_day.color;
                         var new_color =  curr_color == 'red' ? 'green' : 'red';
                         marked_dates['workout'][day.dateString].color = new_color;
                         setMarkedDates(marked_dates);
@@ -112,6 +118,9 @@ export default function LinksScreen() {
                     onChangeItem={item => setCurrDisplay(item.label)}
                 />
             )}
+            <Button
+            title={isLoading ? "" : "Submit"}
+            />
         </ScrollView>
     );
 }
