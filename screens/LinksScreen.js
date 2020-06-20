@@ -96,7 +96,7 @@ export default function LinksScreen() {
                             switch(curr_color){
                                 case 'white': return 'green';
                                 case 'green': return 'red';
-                                case 'red': return 'white'
+                                case 'red': return 'white';
                                 default: console.error("Unhandled color");
                             }
                         }
@@ -108,6 +108,26 @@ export default function LinksScreen() {
                             'startingDay': is_start_day(date_obj, currActType),
                             'endingDay': is_end_day(date_obj, currActType),
                         };
+                        var next_state;
+                        if (marked_dates['workout'][day.dateString].color == 'white') {
+                            next_state = true;
+                        }
+                        else {
+                            next_state = false;
+                        }
+                        var prev_day = Math.round(date_obj.getTime() - msPerDay);
+                        var next_day = Math.round(date_obj.getTime() + msPerDay);
+                        if (activeDays[currActType].indexOf(prev_day) >= 0){
+                            prev_day = new Date(prev_day).toISOString();
+                            prev_day = prev_day.slice(0, 10);
+                            marked_dates['workout'][prev_day]['endingDay'] = next_state;
+                        }
+                        if (activeDays[currActType].indexOf(next_day) >= 0) {
+                            next_day = new Date(next_day).toISOString();
+                            next_day = next_day.slice(0, 10);
+                            marked_dates['workout'][next_day]['startingDay'] = next_state;
+                        }
+
                         setMarkedDates(marked_dates);
                     }}
                 />
