@@ -97,7 +97,12 @@ export default function LinksScreen() {
                 <Calendar
                     markedDates={markedDates[currDisplay]}
                     markingType={'period'}
-                    onDayPress={(day) => { console.log(day) }}
+                    onDayPress={(day) => {
+                        marked_dates = markedDates;
+                        marked_dates['workout']['2020-06-19'].color = 'red';
+                        setMarkedDates(marked_dates);
+                        return;
+                    }}
                 />
             )}
             {isLoading ? <ActivityIndicator /> : (
