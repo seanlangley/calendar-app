@@ -17,14 +17,12 @@ export default function LinksScreen() {
     const [markedDates, setMarkedDates] = useState({});
     const [dropdownData, setDropdownData] = useState({});
     const [currDisplay, setCurrDisplay] = useState("workout");
-    const [actData, setActData] = useState([]);
 
     function initialize_data(data) {
         var marked_dates = {};
         var dropdown_data = [];
         var activity_types = {};
 
-        setActData(data);
         data.forEach(act => {
             var act_type = act.act_type;
             if (!(act_type.name in activity_types)) {
@@ -34,10 +32,7 @@ export default function LinksScreen() {
         });
 
         Object.keys(activity_types).forEach(act_name => {
-            dropdown_data.push(
-                { label: act_name }
-            );
-
+            dropdown_data.push({label: act_name});
             marked_dates[act_name] = {};
             var curr_act_type = activity_types[act_name];
 
@@ -102,23 +97,21 @@ export default function LinksScreen() {
                     onDayPress={(day) => {
                         function transition_color(curr_color){
                             switch(curr_color){
-                                case 'white':
-                                    return 'green';
-                                case 'green':
-                                    return 'red';
-                                case 'red':
-                                    return 'white'
-                                default:
-                                    console.error("Unhandled color");
+                                case 'white': return 'green';
+                                case 'green': return 'red';
+                                case 'red': return 'white'
+                                default: console.error("Unhandled color");
                             }
                         }
                         var marked_dates = JSON.parse(JSON.stringify(markedDates));
                         var curr_day = marked_dates['workout'][day.dateString]
                         if (curr_day == undefined){
-                            return;
+                            marked_dates['workout'][day.dateString] = {'color': 'green'};
                         }
-                        var new_color = transition_color(curr_day.color);
-                        marked_dates['workout'][day.dateString].color = new_color;
+                        else{
+                            var new_color = transition_color(curr_day.color);
+                            marked_dates['workout'][day.dateString].color = new_color;
+                        }
                         setMarkedDates(marked_dates);
                     }}
                 />
