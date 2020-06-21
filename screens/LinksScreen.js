@@ -6,10 +6,10 @@ import { RectButton, ScrollView, FlatList } from 'react-native-gesture-handler';
 import { Calendar, CalendarList, Agenda } from 'react-native-calendars';
 import DropDownPicker from 'react-native-dropdown-picker';
 
-var __TEST__ = false;
+var use_server = false;
 var REST_URL;
-if (!__TEST__) {
-    var REST_URL = 'http://localhost:8000/activities';
+if (use_server) {
+    REST_URL = 'http://localhost:8000/activities';
 }
 let msPerDay = 24 * 60 * 60 * 1000;
 var activeDays = {}
@@ -20,19 +20,26 @@ export default function LinksScreen() {
     const [dropdownData, setDropdownData] = useState({});
     const [currActType, setCurrActType] = useState("workout");
 
-    function is_start_day(day, act_name){
-        prev = Math.round(day.getTime() - msPerDay);
-        if (activeDays[act_name].indexOf(prev) == -1){
-            return true;
+    function is_day_active(day_in_ms, act_name){
+        if (!(day_in_ms in activeDays[act_name])){
+            activeDays[act_name][day_in_ms] = false;
         }
-        return false;
+        return activeDays[act_name][day_in_ms];
     }
-    function is_end_day(day, act_name){
-        var next = Math.round(day.getTime() + msPerDay);
-        if (activeDays[act_name].indexOf(next) == -1){
-            return true;
-        }
-        return false;
+    function set_is_day_active(value, day_in_ms, act_name){
+        activeDays[act_name][day_in_ms] = value;
+    }
+
+    function is_start_day(day_ms, act_name){
+        //A day is a start day if the prev day is not active
+        var prev = Math.round(day_ms - msPerDay);
+        return !is_day_active(prev, act_name);
+    }
+
+    function is_end_day(day_ms, act_name){
+        //A day is an end day if the next day is not active
+        var next = Math.round(day_ms + msPerDay);
+        return !is_day_active(next, act_name);
     }
 
     function initialize_data(data) {
@@ -44,10 +51,10 @@ export default function LinksScreen() {
             var act_type = act.act_type;
             if (!(act_type.name in activity_types)) {
                 activity_types[act_type.name] = [];
-                activeDays[act_type.name] = [];
+                activeDays[act_type.name] = {};
             }
             activity_types[act_type.name].push(act);
-            activeDays[act_type.name].push(new Date(act.day).getTime());
+            activeDays[act_type.name][new Date(act.day).getTime()] = true;
         });
 
         Object.keys(activity_types).forEach(act_name => {
@@ -56,11 +63,11 @@ export default function LinksScreen() {
             var curr_act_type = activity_types[act_name];
 
             curr_act_type.forEach((act, idx) => {
-                var curr = new Date(curr_act_type[idx].day);
+                var curr_ms = new Date(curr_act_type[idx].day).getTime();
                 marked_dates[act.act_type.name][act.day] = {
                     'color': act.was_done ? 'green' : 'red',
-                    'startingDay': is_start_day(curr, act_name),
-                    'endingDay': is_end_day(curr, act_name),
+                    'startingDay': is_start_day(curr_ms, act_name),
+                    'endingDay': is_end_day(curr_ms, act_name),
                 };
             });
         });
@@ -68,20 +75,19 @@ export default function LinksScreen() {
         setDropdownData(dropdown_data);
     }
 
-    if (__TEST__) {
-        useEffect(() => {
-            initialize_data(DATA);
-            setLoading(false);
-        }, []);
-    }
-
-    else {
+    if (use_server) {
         useEffect(() => {
             fetch(REST_URL)
                 .then((response) => response.json())
                 .then((json) => initialize_data(json))
                 .catch((error) => console.error(error))
                 .finally(() => setLoading(false));
+        }, []);
+    }
+    else {
+        useEffect(() => {
+            initialize_data(DATA);
+            setLoading(false);
         }, []);
     }
 
@@ -91,43 +97,54 @@ export default function LinksScreen() {
                 <Calendar
                     markedDates={markedDates[currActType]}
                     markingType={'period'}
-                    onDayPress={(day) => {
-                        function transition_color(curr_color){
-                            switch(curr_color){
-                                case 'white': return 'green';
-                                case 'green': return 'red';
-                                case 'red': return 'white';
-                                default: console.error("Unhandled color");
-                            }
-                        }
+                    onDayPress={(pressed_day) => {
                         var marked_dates = JSON.parse(JSON.stringify(markedDates));
-                        var curr_day = marked_dates['workout'][day.dateString]
-                        var date_obj = new Date(day.dateString);
-                        marked_dates['workout'][day.dateString] = {
-                            'color': curr_day == undefined ? 'green' : transition_color(curr_day.color),
-                            'startingDay': is_start_day(date_obj, currActType),
-                            'endingDay': is_end_day(date_obj, currActType),
-                        };
-                        var next_state;
-                        if (marked_dates['workout'][day.dateString].color == 'white') {
-                            next_state = true;
+                        var curr_day_info = marked_dates[currActType][pressed_day.dateString]
+                        var curr_color = curr_day_info == undefined ? 'white' : curr_day_info.color;
+                        var next_color;
+                        var pressed_day_obj = new Date(pressed_day.dateString);
+                        var pressed_day_ms = pressed_day_obj.getTime();
+                        var prev_day_ms = Math.round(pressed_day_ms - msPerDay);
+                        var next_day_ms = Math.round(pressed_day_ms + msPerDay);
+                        var prev_day_isostr = new Date(prev_day_ms).toISOString().slice(0, 10);
+                        var next_day_isostr = new Date(next_day_ms).toISOString().slice(0, 10);
+                        var should_be_active;
+                        var prev_day_state;
+                        var next_day_state;
+
+                        if (curr_color == 'white'){
+                            next_color = 'green';
+                            should_be_active = true;
+                            prev_day_state = false;
+                            next_day_state = false;
+
+                        }
+                        else if(curr_color == 'green'){
+                            next_color = 'red';
+                            should_be_active = true;
+                        }
+                        else if(curr_color == 'red'){
+                            next_color = 'white';
+                            should_be_active = false;
+                            prev_day_state = true;
+                            next_day_state = true;
                         }
                         else {
-                            next_state = false;
-                        }
-                        var prev_day = Math.round(date_obj.getTime() - msPerDay);
-                        var next_day = Math.round(date_obj.getTime() + msPerDay);
-                        if (activeDays[currActType].indexOf(prev_day) >= 0){
-                            prev_day = new Date(prev_day).toISOString();
-                            prev_day = prev_day.slice(0, 10);
-                            marked_dates['workout'][prev_day]['endingDay'] = next_state;
-                        }
-                        if (activeDays[currActType].indexOf(next_day) >= 0) {
-                            next_day = new Date(next_day).toISOString();
-                            next_day = next_day.slice(0, 10);
-                            marked_dates['workout'][next_day]['startingDay'] = next_state;
+                            console.error('Unhandled color');
                         }
 
+                        if (is_day_active(prev_day_ms, currActType) && prev_day_state != undefined){
+                            marked_dates[currActType][prev_day_isostr]['endingDay'] = prev_day_state;
+                        }
+                        if (is_day_active(next_day_ms, currActType) && next_day_state != undefined){
+                            marked_dates[currActType][next_day_isostr]['startingDay'] = next_day_state;;
+                        }
+                        set_is_day_active(should_be_active, pressed_day_ms, currActType);
+                        marked_dates[currActType][pressed_day.dateString] = {
+                            'color': next_color,
+                            'startingDay': is_start_day(pressed_day_ms, currActType),
+                            'endingDay': is_end_day(pressed_day_ms, currActType),
+                        };
                         setMarkedDates(marked_dates);
                     }}
                 />
@@ -167,7 +184,7 @@ const styles = StyleSheet.create({
     },
 });
 
-if (__TEST__) {
+if (!use_server) {
     var DATA = [
         {
             "day": "2020-06-19",
