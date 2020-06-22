@@ -6,13 +6,14 @@ import { RectButton, ScrollView, FlatList } from 'react-native-gesture-handler';
 import { Calendar, CalendarList, Agenda } from 'react-native-calendars';
 import DropDownPicker from 'react-native-dropdown-picker';
 
-var use_server = false;
+var use_server = true;
 var REST_URL;
 if (use_server) {
     REST_URL = 'http://localhost:8000/activities';
 }
 let msPerDay = 24 * 60 * 60 * 1000;
 var activeDays = {}
+var daysToPost = {}
 
 export default function LinksScreen() {
     const [isLoading, setLoading] = useState(true);
@@ -52,6 +53,7 @@ export default function LinksScreen() {
             if (!(act_type.name in activity_types)) {
                 activity_types[act_type.name] = [];
                 activeDays[act_type.name] = {};
+                daysToPost[act_type.name] = {};
             }
             activity_types[act_type.name].push(act);
             activeDays[act_type.name][new Date(act.day).getTime()] = true;
@@ -111,27 +113,32 @@ export default function LinksScreen() {
                         var should_be_active;
                         var prev_day_state;
                         var next_day_state;
+                        var post_action;
 
                         if (curr_color == 'white'){
                             next_color = 'green';
                             should_be_active = true;
                             prev_day_state = false;
                             next_day_state = false;
+                            post_action = "was_done";
 
                         }
                         else if(curr_color == 'green'){
                             next_color = 'red';
                             should_be_active = true;
+                            post_action = "not_done";
                         }
                         else if(curr_color == 'red'){
                             next_color = 'white';
                             should_be_active = false;
                             prev_day_state = true;
                             next_day_state = true;
+                            post_action = "delete";
                         }
                         else {
                             console.error('Unhandled color');
                         }
+                        daysToPost[currActType][pressed_day.dateString] = post_action;
 
                         if (is_day_active(prev_day_ms, currActType) && prev_day_state != undefined){
                             marked_dates[currActType][prev_day_isostr]['endingDay'] = prev_day_state;
@@ -158,16 +165,14 @@ export default function LinksScreen() {
             <Button
             title={isLoading ? "" : "Submit"}
             onPress={() => {
-                fetch('http://localhost:8000/new_act_app', {
+                fetch('http://localhost:8000/create_activities', {
                     method: 'POST',
                     headers: {
                         Accept: 'application/json',
                         'Content-Type': 'application/json'
                     },
-                    body: {
-                        hello: 'world'
-                    }
-                });
+                    body: JSON.stringify(daysToPost)
+                }).catch(error => console.error(error));
             }}
             />
         </ScrollView>
