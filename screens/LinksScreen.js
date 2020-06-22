@@ -160,8 +160,10 @@ export default function LinksScreen() {
                 <DropDownPicker
                     items={dropdownData}
                     onChangeItem={item => setCurrActType(item.label)}
+                    placeholder='Select activity data to view'
                 />
             )}
+            <Text>Currently viewing activities for {currActType}</Text>
             <Button
             title={isLoading ? "" : "Submit"}
             onPress={() => {
