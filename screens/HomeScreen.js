@@ -1,26 +1,32 @@
 import * as WebBrowser from 'expo-web-browser';
 import React, { useEffect, useState } from 'react';
-import { StyleSheet, Text, View, SectionList } from 'react-native';
+import { StyleSheet, Text, View, ActivityIndicator } from 'react-native';
 import { ScrollView } from 'react-native-gesture-handler';
-import { VictoryBar } from 'victory-native';
+import { VictoryBar, VictoryChart, VictoryAxis } from 'victory-native';
+const moment = require('moment');
+moment.locale('en');
+let months_as_str = moment.monthsShort()
+var month_indices = [];
+for (var i = 0; i < 12; i++){
+    month_indices.push(i);
+}
 
+let url = 'http://localhost:8000/analyze_activities'
 
-
-var url = 'http://localhost:8000/analyze_activities'
-
-
-const Item = ({ title }) => (
-    <View>
-      <Text>{title}</Text>
-    </View>
-  );
 
 export default function HomeScreen() {
     const [actData, setActData] = useState();
     const [isLoading, setLoading] = useState(true);
 
-    function initialize_data(data){
-        setActData(data);
+    function initialize_data(act_types_list){
+        type_data = act_types_list[0];
+        month_data = type_data['month_table'];
+        view_month_data = [];
+        month_data.forEach((month, idx) => {
+            view_month_data.push({'month': idx, 'ratio': month['Ratio']});
+        });
+        
+        setActData(view_month_data);
     }
 
     useEffect(() => {
@@ -32,8 +38,24 @@ export default function HomeScreen() {
     });
     return (
         <View style={styles.container}>
-            <VictoryBar/>
             <ScrollView style={styles.container} contentContainerStyle={styles.contentContainer}>
+            {isLoading ? <ActivityIndicator/> : (
+                <VictoryChart>
+                <VictoryAxis
+                tickValues={month_indices}
+                tickFormat={months_as_str}
+                />
+                <VictoryAxis
+                dependentAxis
+                tickFormat={x => (x)}
+                />
+                <VictoryBar
+                data={actData}
+                x='month'
+                y='ratio'
+                />
+                </VictoryChart>
+            )}
                 <View style={styles.getStartedContainer}>
                     <DevelopmentModeNotice />
                 </View>
