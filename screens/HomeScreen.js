@@ -18,23 +18,24 @@ function Chart(props){
         return <ActivityIndicator/>
     }
     else {
-    return (
-        <VictoryChart>
-        <VictoryAxis
-        tickValues={month_indices}
-        tickFormat={months_as_str}
-        />
-        <VictoryAxis
-        dependentAxis
-        tickFormat={x => (x)}
-        />
-        <VictoryBar
-        data={props.data}
-        x='month'
-        y='ratio'
-        />
-        </VictoryChart>
-    )}
+        return (
+            <VictoryChart>
+            <VictoryAxis
+            tickValues={month_indices}
+            tickFormat={months_as_str}
+            />
+            <VictoryAxis
+            dependentAxis
+            tickFormat={x => (x)}
+            />
+            <VictoryBar
+            data={props.data}
+            x='month'
+            y='ratio'
+            />
+            </VictoryChart>
+        )
+    }
 }
 
 
