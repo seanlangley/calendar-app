@@ -13,6 +13,30 @@ for (var i = 0; i < 12; i++){
 
 let url = 'http://localhost:8000/analyze_activities'
 
+function Chart(props){
+    if(props.is_loading){
+        return <ActivityIndicator/>
+    }
+    else {
+    return (
+        <VictoryChart>
+        <VictoryAxis
+        tickValues={month_indices}
+        tickFormat={months_as_str}
+        />
+        <VictoryAxis
+        dependentAxis
+        tickFormat={x => (x)}
+        />
+        <VictoryBar
+        data={props.data}
+        x='month'
+        y='ratio'
+        />
+        </VictoryChart>
+    )}
+}
+
 
 export default function HomeScreen() {
     const [actData, setActData] = useState();
@@ -39,26 +63,10 @@ export default function HomeScreen() {
     return (
         <View style={styles.container}>
             <ScrollView style={styles.container} contentContainerStyle={styles.contentContainer}>
-            {isLoading ? <ActivityIndicator/> : (
-                <VictoryChart>
-                <VictoryAxis
-                tickValues={month_indices}
-                tickFormat={months_as_str}
-                />
-                <VictoryAxis
-                dependentAxis
-                tickFormat={x => (x)}
-                />
-                <VictoryBar
-                data={actData}
-                x='month'
-                y='ratio'
-                />
-                </VictoryChart>
-            )}
-                <View style={styles.getStartedContainer}>
-                    <DevelopmentModeNotice />
-                </View>
+            <Chart data={actData} is_loading={isLoading}/>
+            <View style={styles.getStartedContainer}>
+                <DevelopmentModeNotice />
+            </View>
             </ScrollView>
         </View>
     );
