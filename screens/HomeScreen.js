@@ -1,6 +1,6 @@
 import * as WebBrowser from 'expo-web-browser';
 import React, { useEffect, useState } from 'react';
-import { StyleSheet, Text, View, ActivityIndicator } from 'react-native';
+import { StyleSheet, Text, View, ActivityIndicator, Button } from 'react-native';
 import { ScrollView } from 'react-native-gesture-handler';
 import { VictoryBar, VictoryChart, VictoryAxis } from 'victory-native';
 const moment = require('moment');
@@ -13,11 +13,49 @@ for (var i = 0; i < 12; i++){
 
 let url = 'http://localhost:8000/analyze_activities'
 
-function Chart(props){
-    if(props.is_loading){
-        return <ActivityIndicator/>
+
+
+export default function HomeScreen() {
+    const [actData, setActData] = useState();
+    const [isLoading, setLoading] = useState(true);
+
+    function initialize_data(act_types_list){
+        var view_month_data = [];
+        act_types_list.forEach(type_data => {
+            var new_type_entry = {'name': type_data['name'], 'data': []};
+            var month_data = type_data['month_table'];
+            month_data.forEach((month, idx) => {
+                new_type_entry['data'].push({'month': idx, 'ratio': month['Ratio']});
+            });
+            view_month_data.push(new_type_entry);
+        });
+        
+        setActData(view_month_data);
     }
-    else {
+
+    useEffect(() => {
+        if(isLoading){
+            fetch(url)
+                .then(response => response.json())
+                .then(json => initialize_data(json))
+                .catch(error => console.error(error))
+                .finally(() => setLoading(false));
+        }
+    });
+
+    function ChartList(props){
+        var charts = [];
+        actData.forEach(act_types_list => {
+            var act_name = act_types_list.name;
+            var textkey = act_name + "text";
+            var data = act_types_list.data;
+            charts.push((<Text key={textkey}>{act_name}</Text>))
+            charts.push((<Chart data={data} key={act_name}/>));
+        });
+        return(charts);
+    }
+
+    function Chart(props){
         return (
             <VictoryChart>
             <VictoryAxis
@@ -34,37 +72,19 @@ function Chart(props){
             y='ratio'
             />
             </VictoryChart>
-        )
-    }
-}
-
-
-export default function HomeScreen() {
-    const [actData, setActData] = useState();
-    const [isLoading, setLoading] = useState(true);
-
-    function initialize_data(act_types_list){
-        type_data = act_types_list[0];
-        month_data = type_data['month_table'];
-        view_month_data = [];
-        month_data.forEach((month, idx) => {
-            view_month_data.push({'month': idx, 'ratio': month['Ratio']});
-        });
-        
-        setActData(view_month_data);
+        );
     }
 
-    useEffect(() => {
-        fetch(url)
-            .then(response => response.json())
-            .then(json => initialize_data(json))
-            .catch(error => console.error(error))
-            .finally(() => setLoading(false));
-    });
     return (
         <View style={styles.container}>
             <ScrollView style={styles.container} contentContainerStyle={styles.contentContainer}>
-            <Chart data={actData} is_loading={isLoading}/>
+            {isLoading ? <ActivityIndicator/> : (
+                <ChartList/>
+            )}
+            <Button
+            title={"Refresh"}
+            onPress={() => setLoading(true)}
+            />
             <View style={styles.getStartedContainer}>
                 <DevelopmentModeNotice />
             </View>
