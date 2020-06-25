@@ -3,19 +3,12 @@ import React, { useEffect, useState } from 'react';
 import { StyleSheet, Text, View, ActivityIndicator, Button } from 'react-native';
 import { ScrollView } from 'react-native-gesture-handler';
 import { VictoryBar, VictoryChart, VictoryAxis } from 'victory-native';
-const moment = require('moment');
-moment.locale('en');
-let months_as_str = moment.monthsShort()
-var month_indices = [];
-for (var i = 0; i < 12; i++){
-    month_indices.push(i);
-}
+import { Chart } from '../components/actChart';
 
 let url = 'http://localhost:8000/analyze_activities'
 
 
-
-export default function HomeScreen() {
+export default function HomeScreen({ navigation }) {
     const [actData, setActData] = useState();
     const [isLoading, setLoading] = useState(true);
 
@@ -43,48 +36,33 @@ export default function HomeScreen() {
         }
     });
 
-    function ChartList(props){
-        var charts = [];
+    function NameList(props){
+        var type_buttons = [];
         actData.forEach(act_types_list => {
             var act_name = act_types_list.name;
-            var textkey = act_name + "text";
-            var data = act_types_list.data;
-            charts.push((<Text key={textkey}>{act_name}</Text>))
-            charts.push((<Chart data={data} key={act_name}/>));
+            type_buttons.push((
+                <Button
+                title={act_name}
+                key={act_name}
+                onPress={() => navigation.navigate('ActDetail', {
+                    'act_data': act_types_list
+                })}
+                />));
         });
-        return(charts);
-    }
-
-    function Chart(props){
-        return (
-            <VictoryChart>
-            <VictoryAxis
-            tickValues={month_indices}
-            tickFormat={months_as_str}
-            />
-            <VictoryAxis
-            dependentAxis
-            tickFormat={x => (x)}
-            />
-            <VictoryBar
-            data={props.data}
-            x='month'
-            y='ratio'
-            />
-            </VictoryChart>
-        );
+        return(type_buttons);
     }
 
     return (
         <View style={styles.container}>
             <ScrollView style={styles.container} contentContainerStyle={styles.contentContainer}>
             {isLoading ? <ActivityIndicator/> : (
-                <ChartList/>
+                <NameList/>
             )}
             <Button
             title={"Refresh"}
             onPress={() => setLoading(true)}
             />
+
             <View style={styles.getStartedContainer}>
                 <DevelopmentModeNotice />
             </View>
