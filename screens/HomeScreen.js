@@ -2,8 +2,6 @@ import * as WebBrowser from 'expo-web-browser';
 import React, { useEffect, useState } from 'react';
 import { StyleSheet, Text, View, ActivityIndicator, Button } from 'react-native';
 import { ScrollView } from 'react-native-gesture-handler';
-import { VictoryBar, VictoryChart, VictoryAxis } from 'victory-native';
-import { Chart } from '../components/actChart';
 
 let url = 'http://localhost:8000/analyze_activities'
 
@@ -38,7 +36,7 @@ export default function HomeScreen({ navigation }) {
 
     function NameList(props){
         var type_buttons = [];
-        actData.forEach(act_types_list => {
+        props.act_data.forEach(act_types_list => {
             var act_name = act_types_list.name;
             type_buttons.push((
                 <Button
@@ -56,7 +54,7 @@ export default function HomeScreen({ navigation }) {
         <View style={styles.container}>
             <ScrollView style={styles.container} contentContainerStyle={styles.contentContainer}>
             {isLoading ? <ActivityIndicator/> : (
-                <NameList/>
+                <NameList act_data={actData}/>
             )}
             <Button
             title={"Refresh"}

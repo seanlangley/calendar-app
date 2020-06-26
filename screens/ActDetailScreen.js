@@ -1,6 +1,5 @@
 import React from 'react';
 import { Text, View } from 'react-native';
-import { VictoryBar, VictoryChart, VictoryAxis } from 'victory-native';
 import { ActChart } from '../components/actChart';
 
 export default function ActDetailScreen(props) {
