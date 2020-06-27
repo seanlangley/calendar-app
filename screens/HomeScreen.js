@@ -1,12 +1,13 @@
-import * as WebBrowser from 'expo-web-browser';
 import React, { useEffect, useState } from 'react';
 import { StyleSheet, Text, View, ActivityIndicator, Button } from 'react-native';
 import { ScrollView } from 'react-native-gesture-handler';
+import { connect } from 'react-redux';
+import { signOut } from '../redux/actions';
 
 let url = 'http://localhost:8000/analyze_activities'
 
 
-export default function HomeScreen({ navigation }) {
+function HomeScreen({ dispatch, navigation }) {
     const [actData, setActData] = useState();
     const [isLoading, setLoading] = useState(true);
 
@@ -64,10 +65,17 @@ export default function HomeScreen({ navigation }) {
             <View style={styles.getStartedContainer}>
                 <DevelopmentModeNotice />
             </View>
+            <Button
+            title={"Sign out"}
+            onPress={() => {
+                dispatch(signOut());
+            }}
+            />
             </ScrollView>
         </View>
     );
 }
+export default connect()(HomeScreen);
 
 HomeScreen.navigationOptions = {
     header: null,
@@ -76,16 +84,10 @@ HomeScreen.navigationOptions = {
 
 function DevelopmentModeNotice() {
     if (__DEV__) {
-        const learnMoreButton = (
-            <Text onPress={handleLearnMorePress} style={styles.helpLinkText}>
-                Learn more
-            </Text>
-        );
-
         return (
             <Text style={styles.developmentModeText}>
                 Development mode is enabled: your app will be slower but you can use useful development
-        tools. {learnMoreButton}
+        tools.
             </Text>
         );
     } else {
@@ -95,10 +97,6 @@ function DevelopmentModeNotice() {
             </Text>
         );
     }
-}
-
-function handleLearnMorePress() {
-    WebBrowser.openBrowserAsync('https://docs.expo.io/versions/latest/workflow/development-mode/');
 }
 
 const styles = StyleSheet.create({

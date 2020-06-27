@@ -17,9 +17,14 @@ const initialState = {
 
 function actApp(state = initialState, action) {
     switch (action.type) {
-        case 'login':
+        case 'signin':
             return Object.assign({}, state, {
-                isSignedIn: action.isSignedIn
+                isSignedIn: true,
+                authToken: action.token
+            });
+        case 'signout':
+            return Object.assign({}, state, {
+                isSignedIn: false
             });
         default:
             return state;
