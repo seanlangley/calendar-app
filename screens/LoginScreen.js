@@ -8,6 +8,7 @@ let url = 'http://localhost:8000/api/login';
 export default connect()(function LoginScreen( { dispatch} ){
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
+    const [failed, setFailed] = useState('');
     return (
       <View>
         <TextInput
@@ -21,6 +22,7 @@ export default connect()(function LoginScreen( { dispatch} ){
           onChangeText={setPassword}
           secureTextEntry
         />
+        <Text style={{color: 'red'}}>{failed}</Text>
         <Button title="Sign in" onPress={() => {
             fetch(url, {
                 method: 'POST',
@@ -30,10 +32,20 @@ export default connect()(function LoginScreen( { dispatch} ){
                 },
                 body: JSON.stringify({username: username, password: password})
             })
-            .then(response => response.json())
+            .then(response => {
+                if(response.status == 200){
+                    return response.json();
+                }
+                else {
+                    setFailed('failed');
+                    return null;
+                }
+            })
             .then(json => {
-                console.log(json);
-                dispatch(signIn(authToken=json.token));
+                if(json){
+                    console.log(json);
+                    dispatch(signIn(authToken=json.token));
+                }
             })
             .catch(error => console.error(error))
             }} />
