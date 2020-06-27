@@ -2,7 +2,7 @@
 export function signIn(token) {
     return {
         type: 'signin',
-        token: token,
+        authToken: token,
     };
 }
 export function signOut() {

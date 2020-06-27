@@ -75,12 +75,15 @@ function HomeScreen({ dispatch, navigation }) {
         </View>
     );
 }
-export default connect()(HomeScreen);
 
-HomeScreen.navigationOptions = {
-    header: null,
+const mapStateToProps = (state, ownProps) => {
+    return {
+        isSignedIn: state.isSignedIn,
+        authToken: state.authToken,
+    };
 };
 
+export default connect(mapStateToProps, null)(HomeScreen);
 
 function DevelopmentModeNotice() {
     if (__DEV__) {

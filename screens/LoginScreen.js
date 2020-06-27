@@ -5,7 +5,7 @@ import { signIn } from '../redux/actions';
 
 let url = 'http://localhost:8000/api/login';
 
-export default connect()(function LoginScreen( {store, dispatch} ){
+export default connect()(function LoginScreen( { dispatch} ){
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
     return (
@@ -33,7 +33,7 @@ export default connect()(function LoginScreen( {store, dispatch} ){
             .then(response => response.json())
             .then(json => {
                 console.log(json);
-                dispatch(signIn(token=json.token));
+                dispatch(signIn(authToken=json.token));
             })
             .catch(error => console.error(error))
             }} />

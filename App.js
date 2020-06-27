@@ -2,7 +2,7 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import React, {useState, setState} from 'react';
 import { Platform, StatusBar, StyleSheet, View, Text } from 'react-native';
-import { Provider } from 'react-redux';
+import { Provider, connect } from 'react-redux';
 import { createStore } from 'redux';
 
 import useCachedResources from './hooks/useCachedResources';
@@ -12,7 +12,8 @@ import ActDetailScreen from './screens/ActDetailScreen';
 import LoginScreen from './screens/LoginScreen';
 
 const initialState = {
-    isSignedIn: false
+    isSignedIn: false,
+    authToken: null,
 }
 
 function actApp(state = initialState, action) {
@@ -20,7 +21,7 @@ function actApp(state = initialState, action) {
         case 'signin':
             return Object.assign({}, state, {
                 isSignedIn: true,
-                authToken: action.token
+                authToken: action.authToken
             });
         case 'signout':
             return Object.assign({}, state, {
@@ -32,10 +33,10 @@ function actApp(state = initialState, action) {
 }
 
 const Stack = createStackNavigator();
+const store = createStore(actApp);
 
 export default function App(props) {
     const isLoadingComplete = useCachedResources();
-    const store = createStore(actApp);
     const [isSignedIn, setSignedIn] = useState(false);
     store.subscribe(() => setSignedIn(store.getState().isSignedIn))
 
