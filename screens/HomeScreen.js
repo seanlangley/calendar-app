@@ -24,6 +24,8 @@ function HomeScreen(props) {
                 <SwipeListView
                     data={Object.keys(props.chartData)}
                     keyExtractor={item => item}
+                    rightOpenValue={-150}
+                    disableRightSwipe={true}
                     renderItem={({ item }) =>
                         <View style={styles.rowFront}>
                             <Button
@@ -37,12 +39,19 @@ function HomeScreen(props) {
                     }
                     renderHiddenItem={(data, rowMap) => (
                         <View style={styles.rowBack}>
-                            <Text>Left</Text>
-                            <Text>Right</Text>
+                            <View
+                                style={{backgroundColor: "aqua"}}>
+                            <Button
+                                title={'Edit'} 
+                            />
+                            </View>
+                            <View style={{backgroundColor: "red"}}>
+                            <Button
+                                title={'Delete'}
+                            />
+                            </View>
                         </View>
                     )}
-                    leftOpenValue={75}
-                    rightOpenValue={-75}
                 />
             )}
             <native.TextInput
@@ -125,7 +134,8 @@ const styles = StyleSheet.create({
         backgroundColor: '#DDD',
         flex: 1,
         flexDirection: 'row',
-        justifyContent: 'space-between',
+        justifyContent: 'flex-end',
         paddingLeft: 15,
+        paddingRight: 5
     },
 });
