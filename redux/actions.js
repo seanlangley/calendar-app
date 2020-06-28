@@ -54,5 +54,5 @@ export function fetchChartData(token) {
         })
             .then(response => response.json())
             .then(json => dispatch(setChartData(initialize_data(json))));
-    }
+        }
 }

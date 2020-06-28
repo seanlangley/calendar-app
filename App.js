@@ -1,50 +1,28 @@
 import { NavigationContainer } from '@react-navigation/native';
+import thunkMiddleware from 'redux-thunk'
+import { createLogger } from 'redux-logger'
+import { createStore, applyMiddleware } from 'redux'
 import { createStackNavigator } from '@react-navigation/stack';
 import React, {useState, setState} from 'react';
 import { Platform, StatusBar, StyleSheet, View, Text } from 'react-native';
 import { Provider, connect } from 'react-redux';
-import { createStore } from 'redux';
 
 import useCachedResources from './hooks/useCachedResources';
 import BottomTabNavigator from './navigation/BottomTabNavigator';
 import LinkingConfiguration from './navigation/LinkingConfiguration';
 import HomeScreen from './screens/HomeScreen';
 import LoginScreen from './screens/LoginScreen';
+import rootReducer from './redux/reducers';
 
-const initialState = {
-    isSignedIn: false,
-    authToken: null,
-    currActType: null,
-    monthChartData: [],
-    chartData: null,
-}
-
-function actApp(state = initialState, action) {
-    switch (action.type) {
-        case 'signin':
-            return Object.assign({}, state, {
-                isSignedIn: true,
-                authToken: action.authToken
-            });
-        case 'signout':
-            return Object.assign({}, state, {
-                isSignedIn: false
-            });
-        case 'set_act_type':
-            return Object.assign({}, state, {
-                currActType: action.new_act_type
-            });
-        case 'set_chart_data':
-            return Object.assign({}, state, {
-                chartData: action.data,
-            });
-        default:
-            return state;
-    }
-}
+const loggerMiddleware = createLogger()
 
 const Stack = createStackNavigator();
-const store = createStore(actApp);
+const store = createStore(rootReducer,
+    applyMiddleware(
+        thunkMiddleware, // lets us dispatch() functions
+        loggerMiddleware // neat middleware that logs actions
+    )
+);
 
 export default function App(props) {
     const isLoadingComplete = useCachedResources();
