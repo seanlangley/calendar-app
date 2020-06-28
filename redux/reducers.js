@@ -1,3 +1,5 @@
+import { combineReducers } from 'redux';
+
 const initialState = {
     isSignedIn: false,
     authToken: null,
@@ -6,13 +8,17 @@ const initialState = {
     chartData: null,
 }
 
-export default function rootReducer(state = initialState, action) {
+function signIn(action) {
+    return {
+        isSignedIn: true,
+        authToken: action.authToken
+    };
+}
+
+function rootReducer(state = initialState, action) {
     switch (action.type) {
         case 'signin':
-            return Object.assign({}, state, {
-                isSignedIn: true,
-                authToken: action.authToken
-            });
+            return Object.assign({}, state, signIn(action));
         case 'signout':
             return Object.assign({}, state, {
                 isSignedIn: false
@@ -33,3 +39,5 @@ export default function rootReducer(state = initialState, action) {
             return state;
     }
 }
+
+export default rootReducer;

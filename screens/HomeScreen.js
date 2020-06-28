@@ -5,9 +5,11 @@ import { connect } from 'react-redux';
 import * as actions from '../redux/actions';
 import { mapStateToProps } from '../redux/react_funcs';
 import { check_fetch } from '../utils/utils';
+import { SwipeListView } from 'react-native-swipe-list-view';
 
 function HomeScreen(props) {
     const [newType, setNewType] = useState('');
+    const [listViewData, setListViewData] = useState();
 
     useEffect(() => {
         if (props.chartData == null) {
@@ -18,35 +20,47 @@ function HomeScreen(props) {
 
     return (
         <View style={styles.container}>
-                {props.chartData == null ? <ActivityIndicator/> : (
-                    <native.FlatList
+            {props.chartData == null ? <ActivityIndicator /> : (
+                <SwipeListView
                     data={Object.keys(props.chartData)}
                     keyExtractor={item => item}
                     renderItem={({ item }) =>
-                        <Button
-                            title={item}
-                            onPress={() => {
-                                props.dispatch(actions.setActType(item));
-                                props.navigation.navigate('TypeDetail');
-                            }}
-                        />}
+                        <View style={styles.rowFront}>
+                            <Button
+                                title={item}
+                                onPress={() => {
+                                    props.dispatch(actions.setActType(item));
+                                    props.navigation.navigate('TypeDetail');
+                                }}
+                            />
+                        </View>
+                    }
+                    renderHiddenItem={(data, rowMap) => (
+                        <View style={styles.rowBack}>
+                            <Text>Left</Text>
+                            <Text>Right</Text>
+                        </View>
+                    )}
+                    leftOpenValue={75}
+                    rightOpenValue={-75}
                 />
             )}
             <native.TextInput
-                placeholder="New Acvitity Name" 
+                placeholder="New Acvitity Name"
                 value={newType}
                 onChangeText={setNewType}
             />
             <Button
-                title={"Submit New Activity"} 
+                title={"Submit New Activity"}
                 onPress={() => {
-                    check_fetch('api/new_act', 'POST', props.authToken, {name: newType});
+                    check_fetch('api/new_act', 'POST', props.authToken, { name: newType });
                     props.dispatch(actions.setChartData(null));
                 }}
             />
             <Button
                 title={"Sign out"}
                 onPress={() => {
+                    props.dispatch(actions.setChartData(null));
                     props.dispatch(actions.signOut());
                 }}
             />
@@ -97,5 +111,21 @@ const styles = StyleSheet.create({
     getStartedContainer: {
         alignItems: 'center',
         marginHorizontal: 50,
+    },
+    rowFront: {
+        alignItems: 'center',
+        backgroundColor: 'white',
+        borderBottomColor: 'white',
+        borderBottomWidth: 1,
+        justifyContent: 'center',
+        height: 50,
+    },
+    rowBack: {
+        alignItems: 'center',
+        backgroundColor: '#DDD',
+        flex: 1,
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        paddingLeft: 15,
     },
 });
