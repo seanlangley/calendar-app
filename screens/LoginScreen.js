@@ -36,6 +36,23 @@ export default connect()(function LoginScreen( { dispatch} ){
             })
             .catch(error => console.error(error));;
             }} />
+        <Button title="Create Account" onPress={() => {
+            check_fetch('api/register', 'POST', '', {username: 'fred1', password: 'password'})
+            .then(json => {
+                if(json == undefined){
+                    setFailed('Something bad happened');
+                }
+                else{
+                    if (json.created){
+                        setFailed('Account successfully created');
+                    }
+                    else{
+                        setFailed(json.reason);
+                    }
+                }
+            })
+            .catch(error => console.error(error));;
+            }} />
       </View>
     );
 })

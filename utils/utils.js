@@ -15,8 +15,8 @@ export async function check_fetch(url, method, token, post_data = '') {
         }
         let response = await fetch(url, fetch_args);
         let json = await response.json();
+        console.log(json);
         if (response.status.toString()[0] != '2') {
-            console.log(json);
             return undefined;
         }
         return json;
