@@ -9,14 +9,14 @@ import { check_fetch } from '../utils/utils';
 function HomeScreen(props) {
 
     function initialize_data(act_types_list) {
-        var month_chart_data = [];
+        var month_chart_data = {};
         act_types_list.forEach(type_data => {
-            var new_type_entry = { 'name': type_data['name'], 'data': [] };
+            var new_type_entry = [];
             var month_data = type_data['month_table'];
             month_data.forEach((month, idx) => {
-                new_type_entry['data'].push({ 'month': idx, 'ratio': month['Ratio'] });
+                new_type_entry.push({ 'month': idx, 'ratio': month['Ratio'] });
             });
-            month_chart_data.push(new_type_entry);
+            month_chart_data[type_data.name] = new_type_entry;
         });
         props.dispatch(actions.setMonthChartData(month_chart_data));
     }
@@ -59,8 +59,7 @@ export default connect(mapStateToProps, null)(HomeScreen);
 
 function NameList(props) {
     var type_buttons = [];
-    props.act_data.forEach(act_types_list => {
-        var act_name = act_types_list.name;
+    Object.keys(props.act_data).forEach(act_name => {
         type_buttons.push((
             <Button
                 title={act_name}

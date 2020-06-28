@@ -5,10 +5,10 @@ import * as redux from 'react-redux';
 import { mapStateToProps } from '../redux/react_funcs'
 
 function ActDetailScreen(props) {
-    var act_data = props.monthChartData[0];
+    var act_data = props.monthChartData[props.currActType];
     return (
         <View>
-            <ActChart name={act_data.name} data={act_data.data}/>
+            <ActChart name={props.currActType} data={act_data}/>
         </View>
     );
 }
