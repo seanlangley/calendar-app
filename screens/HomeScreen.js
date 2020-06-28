@@ -9,34 +9,12 @@ import { check_fetch } from '../utils/utils';
 function HomeScreen(props) {
     const [newType, setNewType] = useState('');
 
-    function initialize_data(act_types_list) {
-        var chart_data = {};
-        act_types_list.forEach(type_data => {
-            chart_data[type_data.name] = {};
-            var month_entry = [];
-            var week_entry = [];
-            var month_data = type_data['month_table'];
-            var week_data = type_data['week_table'];
-            month_data.forEach((month, idx) => {
-                month_entry.push({ 'month': idx, 'ratio': month['Ratio'] });
-            });
-            week_data.forEach((weekday, idx) => {
-                week_entry.push({'weekday': idx, 'ratio': weekday['Ratio']});
-            });
-            chart_data[type_data.name]['month'] = month_entry;
-            chart_data[type_data.name]['week'] = week_entry;
-        });
-        props.dispatch(actions.setChartData(chart_data));
-    }
-
     useEffect(() => {
         if (props.chartData == null) {
-            check_fetch('analyze_activities', 'GET', props.authToken)
-                .then(json => initialize_data(json))
-                .catch(error => console.error(error))
+            props.dispatch(actions.fetchChartData(props.authToken))
+            .then(console.log('got chart data'));
         }
     });
-
 
     return (
         <View style={styles.container}>

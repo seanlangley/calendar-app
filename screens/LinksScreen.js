@@ -2,9 +2,9 @@ import React, { useEffect, useState } from 'react';
 import { Button, StyleSheet, Text, View, ActivityIndicator } from 'react-native';
 import { ScrollView } from 'react-native-gesture-handler';
 import { Calendar } from 'react-native-calendars';
-import DropDownPicker from 'react-native-dropdown-picker';
 import {connect} from 'react-redux';
 import { mapStateToProps } from '../redux/react_funcs';
+import * as actions from '../redux/actions';
 import {check_fetch} from '../utils/utils';
 
 var use_server = true;
