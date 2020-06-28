@@ -24,26 +24,25 @@ export default connect()(function LoginScreen( { dispatch} ){
         />
         <Text style={{color: 'red'}}>{failed}</Text>
         <Button title="Sign in" onPress={() => {
-            fetch(url, {
+            let request = {
                 method: 'POST',
                 headers: {
-                    Accept: 'application/json',
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify({username: username, password: password})
-            })
+                body: JSON.stringify({username: username, password: password}) 
+            }
+            var failed = false;
+            fetch(url, request)
             .then(response => {
-                if(response.status == 200){
-                    return response.json();
-                }
-                else {
+                if(response.status != 200){
+                    failed = true;
                     setFailed('failed');
-                    return null;
                 }
+                return response.json();
             })
             .then(json => {
-                if(json){
-                    console.log(json);
+                console.log(json);
+                if(!failed){
                     dispatch(signIn(authToken=json.token));
                 }
             })
