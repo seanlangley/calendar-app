@@ -7,7 +7,7 @@ import { signOut } from '../redux/actions';
 let url = 'http://localhost:8000/analyze_activities'
 
 
-function HomeScreen({ dispatch, navigation }) {
+function HomeScreen(props) {
     const [actData, setActData] = useState();
     const [isLoading, setLoading] = useState(true);
 
@@ -27,7 +27,12 @@ function HomeScreen({ dispatch, navigation }) {
 
     useEffect(() => {
         if(isLoading){
-            fetch(url)
+            fetch(url, {
+                method: 'GET',
+                headers: {
+                    Authorization: "Token " + props.authToken,
+                }
+            })
                 .then(response => response.json())
                 .then(json => initialize_data(json))
                 .catch(error => console.error(error))
@@ -43,7 +48,7 @@ function HomeScreen({ dispatch, navigation }) {
                 <Button
                 title={act_name}
                 key={act_name}
-                onPress={() => navigation.navigate('ActDetail', {
+                onPress={() => props.navigation.navigate('ActDetail', {
                     'act_data': act_types_list
                 })}
                 />));
@@ -68,7 +73,7 @@ function HomeScreen({ dispatch, navigation }) {
             <Button
             title={"Sign out"}
             onPress={() => {
-                dispatch(signOut());
+                props.dispatch(signOut());
             }}
             />
             </ScrollView>
