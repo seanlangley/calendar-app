@@ -20,7 +20,6 @@ function LinksScreen(props) {
     const [isLoading, setLoading] = useState(true);
     const [markedDates, setMarkedDates] = useState({});
     const [dropdownData, setDropdownData] = useState({});
-    const [currActType, setCurrActType] = useState("");
 
     function is_day_active(day_in_ms, act_name){
         if (!(day_in_ms in activeDays[act_name])){
@@ -74,7 +73,6 @@ function LinksScreen(props) {
                 };
             });
         });
-        setCurrActType(Object.keys(marked_dates)[0]);
         setMarkedDates(marked_dates);
         setDropdownData(dropdown_data);
     }
@@ -100,9 +98,10 @@ function LinksScreen(props) {
         <ScrollView style={styles.container} contentContainerStyle={styles.contentContainer}>
             {isLoading ? <ActivityIndicator /> : (
                 <Calendar
-                    markedDates={markedDates[currActType]}
+                    markedDates={markedDates[props.currActType]}
                     markingType={'period'}
                     onDayPress={(pressed_day) => {
+                        let currActType = props.currActType;
                         var marked_dates = JSON.parse(JSON.stringify(markedDates));
                         var curr_day_info = marked_dates[currActType][pressed_day.dateString]
                         var curr_color = curr_day_info == undefined ? 'white' : curr_day_info.color;
@@ -159,14 +158,7 @@ function LinksScreen(props) {
                     }}
                 />
             )}
-            {isLoading ? <ActivityIndicator /> : (
-                <DropDownPicker
-                    items={dropdownData}
-                    onChangeItem={item => setCurrActType(item.label)}
-                    placeholder='Select activity data to view'
-                />
-            )}
-            <Text>Currently viewing activities for {currActType}</Text>
+            <Text>Currently viewing activities for {props.currActType}</Text>
             <Button
             title={isLoading ? "" : "Submit"}
             onPress={() => {
