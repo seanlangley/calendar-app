@@ -8,3 +8,10 @@ export function signIn(token) {
 export function signOut() {
     return { type: 'signout'};
 }
+
+export function setActType(new_type){
+    return {
+        type: 'set_act_type',
+        new_act_type: new_type
+    }
+}
