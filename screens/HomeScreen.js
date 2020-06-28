@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { StyleSheet, Text, View, ActivityIndicator, Button } from 'react-native';
+import * as native from 'react-native';
 import { ScrollView } from 'react-native-gesture-handler';
 import { connect } from 'react-redux';
 import * as actions from '../redux/actions';
@@ -39,14 +40,21 @@ function HomeScreen(props) {
 
     return (
         <View style={styles.container}>
-            <ScrollView style={styles.container} contentContainerStyle={styles.contentContainer}>
-                {props.chartData == null ? <ActivityIndicator /> : (
-                    <NameList
-                        act_data={props.chartData}
-                        navigation={props.navigation}
-                        dispatch={props.dispatch}
-                    />
+                {props.chartData == null ? <ActivityIndicator/> : (
+                    <native.FlatList
+                    data={Object.keys(props.chartData)}
+                    keyExtractor={item => item}
+                    renderItem={({ item }) =>
+                        <Button
+                            title={item}
+                            onPress={() => {
+                                props.dispatch(actions.setActType(item));
+                                props.navigation.navigate('TypeDetail');
+                            }}
+                        />}
+                />
                 )}
+            <View style={styles.container} contentContainerStyle={styles.contentContainer}>
                 <View style={styles.getStartedContainer}>
                     <DevelopmentModeNotice />
                 </View>
@@ -56,7 +64,7 @@ function HomeScreen(props) {
                         props.dispatch(actions.signOut());
                     }}
                 />
-            </ScrollView>
+            </View>
         </View>
     );
 }
