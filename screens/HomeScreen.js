@@ -3,6 +3,8 @@ import { StyleSheet, Text, View, ActivityIndicator, Button } from 'react-native'
 import { ScrollView } from 'react-native-gesture-handler';
 import { connect } from 'react-redux';
 import { signOut } from '../redux/actions';
+import {mapStateToProps} from '../redux/react_funcs';
+import {checkfetch} from '../utils/utils';
 
 let url = 'http://localhost:8000/analyze_activities'
 
@@ -27,16 +29,10 @@ function HomeScreen(props) {
 
     useEffect(() => {
         if(isLoading){
-            fetch(url, {
-                method: 'GET',
-                headers: {
-                    Authorization: "Token " + props.authToken,
-                }
-            })
-                .then(response => response.json())
-                .then(json => initialize_data(json))
-                .catch(error => console.error(error))
-                .finally(() => setLoading(false));
+            check_fetch('analyze_activities', 'GET', props.authToken)
+            .then(json => initialize_data(json))
+            .catch(error => console.error(error))
+            .finally(() => setLoading(false));
         }
     });
 
@@ -81,12 +77,6 @@ function HomeScreen(props) {
     );
 }
 
-const mapStateToProps = (state, ownProps) => {
-    return {
-        isSignedIn: state.isSignedIn,
-        authToken: state.authToken,
-    };
-};
 
 export default connect(mapStateToProps, null)(HomeScreen);
 

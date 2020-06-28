@@ -1,25 +1,26 @@
-import { Ionicons } from '@expo/vector-icons';
-import * as WebBrowser from 'expo-web-browser';
 import React, { useEffect, useState } from 'react';
 import { Button, StyleSheet, Text, View, ActivityIndicator } from 'react-native';
-import { RectButton, ScrollView, FlatList } from 'react-native-gesture-handler';
-import { Calendar, CalendarList, Agenda } from 'react-native-calendars';
+import { ScrollView } from 'react-native-gesture-handler';
+import { Calendar } from 'react-native-calendars';
 import DropDownPicker from 'react-native-dropdown-picker';
+import {connect} from 'react-redux';
+import { mapStateToProps } from '../redux/react_funcs';
+import {check_fetch} from '../utils/utils';
 
 var use_server = true;
-var REST_URL;
+var url;
 if (use_server) {
-    REST_URL = 'http://localhost:8000/activities';
+    url = 'http://localhost:8000/activities/';
 }
 let msPerDay = 24 * 60 * 60 * 1000;
 var activeDays = {}
 var daysToPost = {}
 
-export default function LinksScreen() {
+function LinksScreen(props) {
     const [isLoading, setLoading] = useState(true);
     const [markedDates, setMarkedDates] = useState({});
     const [dropdownData, setDropdownData] = useState({});
-    const [currActType, setCurrActType] = useState("workout");
+    const [currActType, setCurrActType] = useState("");
 
     function is_day_active(day_in_ms, act_name){
         if (!(day_in_ms in activeDays[act_name])){
@@ -73,17 +74,19 @@ export default function LinksScreen() {
                 };
             });
         });
+        setCurrActType(Object.keys(marked_dates)[0]);
         setMarkedDates(marked_dates);
         setDropdownData(dropdown_data);
     }
 
     if (use_server) {
         useEffect(() => {
-            fetch(REST_URL)
-                .then((response) => response.json())
-                .then((json) => initialize_data(json))
-                .catch((error) => console.error(error))
-                .finally(() => setLoading(false));
+            check_fetch('activities/', 'GET', props.authToken)
+            .then(json => {
+                initialize_data(json);
+                setLoading(false);
+            })
+            .catch(error => console.error(error));
         }, []);
     }
     else {
@@ -167,19 +170,15 @@ export default function LinksScreen() {
             <Button
             title={isLoading ? "" : "Submit"}
             onPress={() => {
-                fetch('http://localhost:8000/create_activities', {
-                    method: 'POST',
-                    headers: {
-                        Accept: 'application/json',
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify(daysToPost)
-                }).catch(error => console.error(error));
+                check_fetch('create_activities', 'POST', props.authToken, daysToPost)
+                .catch(error => console.error(error));
             }}
             />
         </ScrollView>
     );
 }
+
+export default connect(mapStateToProps, null)(LinksScreen);
 
 const styles = StyleSheet.create({
     container: {

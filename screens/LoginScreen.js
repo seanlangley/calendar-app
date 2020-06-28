@@ -2,6 +2,7 @@ import React, { useState, setState} from 'react';
 import {Text, View, Button, TextInput} from 'react-native';
 import { connect } from 'react-redux';
 import { signIn } from '../redux/actions';
+import {check_fetch} from '../utils/utils';
 
 let url = 'http://localhost:8000/api/login';
 
@@ -24,29 +25,16 @@ export default connect()(function LoginScreen( { dispatch} ){
         />
         <Text style={{color: 'red'}}>{failed}</Text>
         <Button title="Sign in" onPress={() => {
-            let request = {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({username: username, password: password}) 
-            }
-            var failed = false;
-            fetch(url, request)
-            .then(response => {
-                if(response.status != 200){
-                    failed = true;
-                    setFailed('failed');
-                }
-                return response.json();
-            })
+            check_fetch('api/login', 'POST', '', {username: 'fredb', password: 'abcd'})
             .then(json => {
-                console.log(json);
-                if(!failed){
+                if(json == undefined){
+                    setFailed('Could not log in');
+                }
+                else {
                     dispatch(signIn(authToken=json.token));
                 }
             })
-            .catch(error => console.error(error))
+            .catch(error => console.error(error));;
             }} />
       </View>
     );
