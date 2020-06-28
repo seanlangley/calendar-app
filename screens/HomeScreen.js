@@ -1,13 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import { StyleSheet, Text, View, ActivityIndicator, Button } from 'react-native';
 import * as native from 'react-native';
-import { ScrollView } from 'react-native-gesture-handler';
 import { connect } from 'react-redux';
 import * as actions from '../redux/actions';
 import { mapStateToProps } from '../redux/react_funcs';
 import { check_fetch } from '../utils/utils';
 
 function HomeScreen(props) {
+    const [newType, setNewType] = useState('');
 
     function initialize_data(act_types_list) {
         var chart_data = {};
@@ -53,17 +53,29 @@ function HomeScreen(props) {
                             }}
                         />}
                 />
-                )}
+            )}
+            <native.TextInput
+                placeholder="New Acvitity Name" 
+                value={newType}
+                onChangeText={setNewType}
+            />
+            <Button
+                title={"Submit New Activity"} 
+                onPress={() => {
+                    check_fetch('api/new_act', 'POST', props.authToken, {name: newType});
+                    props.dispatch(actions.setChartData(null));
+                }}
+            />
+            <Button
+                title={"Sign out"}
+                onPress={() => {
+                    props.dispatch(actions.signOut());
+                }}
+            />
             <View style={styles.container} contentContainerStyle={styles.contentContainer}>
                 <View style={styles.getStartedContainer}>
                     <DevelopmentModeNotice />
                 </View>
-                <Button
-                    title={"Sign out"}
-                    onPress={() => {
-                        props.dispatch(actions.signOut());
-                    }}
-                />
             </View>
         </View>
     );
@@ -71,22 +83,6 @@ function HomeScreen(props) {
 
 
 export default connect(mapStateToProps, null)(HomeScreen);
-
-function NameList(props) {
-    var type_buttons = [];
-    Object.keys(props.act_data).forEach(act_name => {
-        type_buttons.push((
-            <Button
-                title={act_name}
-                key={act_name}
-                onPress={() => {
-                    props.dispatch(actions.setActType(act_name));
-                    props.navigation.navigate('TypeDetail');
-                }}
-            />));
-    });
-    return (type_buttons);
-}
 
 function DevelopmentModeNotice() {
     if (__DEV__) {

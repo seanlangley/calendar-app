@@ -47,12 +47,15 @@ function LinksScreen(props) {
         var dropdown_data = [];
         var activity_types = {};
 
+        Object.keys(props.chartData).forEach(act_name => {
+            marked_dates[act_name] = {};
+            daysToPost[act_name] = {};
+            activeDays[act_name] = {};
+        });
         data.forEach(act => {
             var act_type = act.act_type;
             if (!(act_type.name in activity_types)) {
                 activity_types[act_type.name] = [];
-                activeDays[act_type.name] = {};
-                daysToPost[act_type.name] = {};
             }
             activity_types[act_type.name].push(act);
             activeDays[act_type.name][new Date(act.day).getTime()] = true;
