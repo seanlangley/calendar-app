@@ -25,7 +25,7 @@ export default connect()(function LoginScreen( { dispatch} ){
         />
         <Text style={{color: 'red'}}>{failed}</Text>
         <Button title="Sign in" onPress={() => {
-            check_fetch('api/login', 'POST', '', {username: 'fredb', password: 'abcd'})
+            check_fetch('api/login', 'POST', '', {username: 'sean.langley', password: 'password'})
             .then(json => {
                 if(json == undefined){
                     setFailed('Could not log in');

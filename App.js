@@ -8,12 +8,13 @@ import { createStore } from 'redux';
 import useCachedResources from './hooks/useCachedResources';
 import BottomTabNavigator from './navigation/BottomTabNavigator';
 import LinkingConfiguration from './navigation/LinkingConfiguration';
-import ActDetailScreen from './screens/ActDetailScreen';
+import HomeScreen from './screens/HomeScreen';
 import LoginScreen from './screens/LoginScreen';
 
 const initialState = {
     isSignedIn: false,
     authToken: null,
+    currActType: null,
 }
 
 function actApp(state = initialState, action) {
@@ -26,6 +27,10 @@ function actApp(state = initialState, action) {
         case 'signout':
             return Object.assign({}, state, {
                 isSignedIn: false
+            });
+        case 'set_act_type':
+            return Object.assign({}, state, {
+                currActType: action.new_act_type
             });
         default:
             return state;
@@ -51,8 +56,8 @@ export default function App(props) {
                         <Stack.Navigator>
                             {isSignedIn ? (
                                 <>
-                                    <Stack.Screen name="Root" component={BottomTabNavigator} />
-                                    <Stack.Screen name="ActDetail" component={ActDetailScreen} />
+                                    <Stack.Screen name="Home" component={HomeScreen} />
+                                    <Stack.Screen name="TypeDetail" component={BottomTabNavigator} />
                                 </>
                             ) : (
                                     <Stack.Screen name="Login" component={LoginScreen} />
