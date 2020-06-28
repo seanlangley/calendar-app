@@ -15,3 +15,10 @@ export function setActType(new_type){
         new_act_type: new_type
     }
 }
+
+export function setMonthChartData(new_data){
+    return {
+        type: 'set_month_chart_data',
+        new_data: new_data
+    }
+}

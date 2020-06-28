@@ -19,7 +19,6 @@ var daysToPost = {}
 function LinksScreen(props) {
     const [isLoading, setLoading] = useState(true);
     const [markedDates, setMarkedDates] = useState({});
-    const [dropdownData, setDropdownData] = useState({});
 
     function is_day_active(day_in_ms, act_name){
         if (!(day_in_ms in activeDays[act_name])){
@@ -74,7 +73,6 @@ function LinksScreen(props) {
             });
         });
         setMarkedDates(marked_dates);
-        setDropdownData(dropdown_data);
     }
 
     if (use_server) {
