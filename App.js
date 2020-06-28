@@ -16,7 +16,7 @@ const initialState = {
     authToken: null,
     currActType: null,
     monthChartData: [],
-    loading: true,
+    chartData: null,
 }
 
 function actApp(state = initialState, action) {
@@ -34,10 +34,9 @@ function actApp(state = initialState, action) {
             return Object.assign({}, state, {
                 currActType: action.new_act_type
             });
-        case 'set_month_chart_data':
+        case 'set_chart_data':
             return Object.assign({}, state, {
-                monthChartData: action.new_data,
-                loading: false,
+                chartData: action.data,
             });
         default:
             return state;

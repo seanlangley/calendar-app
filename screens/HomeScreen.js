@@ -9,20 +9,27 @@ import { check_fetch } from '../utils/utils';
 function HomeScreen(props) {
 
     function initialize_data(act_types_list) {
-        var month_chart_data = {};
+        var chart_data = {};
         act_types_list.forEach(type_data => {
-            var new_type_entry = [];
+            chart_data[type_data.name] = {};
+            var month_entry = [];
+            var week_entry = [];
             var month_data = type_data['month_table'];
+            var week_data = type_data['week_table'];
             month_data.forEach((month, idx) => {
-                new_type_entry.push({ 'month': idx, 'ratio': month['Ratio'] });
+                month_entry.push({ 'month': idx, 'ratio': month['Ratio'] });
             });
-            month_chart_data[type_data.name] = new_type_entry;
+            week_data.forEach((weekday, idx) => {
+                week_entry.push({'weekday': idx, 'ratio': weekday['Ratio']});
+            });
+            chart_data[type_data.name]['month'] = month_entry;
+            chart_data[type_data.name]['week'] = week_entry;
         });
-        props.dispatch(actions.setMonthChartData(month_chart_data));
+        props.dispatch(actions.setChartData(chart_data));
     }
 
     useEffect(() => {
-        if (props.loading) {
+        if (props.chartData == null) {
             check_fetch('analyze_activities', 'GET', props.authToken)
                 .then(json => initialize_data(json))
                 .catch(error => console.error(error))
@@ -33,9 +40,9 @@ function HomeScreen(props) {
     return (
         <View style={styles.container}>
             <ScrollView style={styles.container} contentContainerStyle={styles.contentContainer}>
-                {props.loading == true ? <ActivityIndicator /> : (
+                {props.chartData == null ? <ActivityIndicator /> : (
                     <NameList
-                        act_data={props.monthChartData}
+                        act_data={props.chartData}
                         navigation={props.navigation}
                         dispatch={props.dispatch}
                     />

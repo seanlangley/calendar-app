@@ -16,9 +16,9 @@ export function setActType(new_type){
     }
 }
 
-export function setMonthChartData(new_data){
+export function setChartData(data){
     return {
-        type: 'set_month_chart_data',
-        new_data: new_data
+        type: 'set_chart_data',
+        data: data,
     }
 }
