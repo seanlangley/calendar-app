@@ -9,10 +9,9 @@ import { SwipeListView } from 'react-native-swipe-list-view';
 
 function HomeScreen(props) {
     const [newType, setNewType] = useState('');
-    const [listViewData, setListViewData] = useState();
 
     useEffect(() => {
-        if (props.chartData == null) {
+        if (props.chartData.hasData == false) {
             props.dispatch(actions.fetchChartData(props.authToken))
             .then(console.log('got chart data'));
         }
@@ -22,7 +21,7 @@ function HomeScreen(props) {
         <View style={styles.container}>
             {props.chartData == null ? <ActivityIndicator /> : (
                 <SwipeListView
-                    data={Object.keys(props.chartData)}
+                    data={Object.keys(props.chartData.data)}
                     keyExtractor={item => item}
                     rightOpenValue={-150}
                     disableRightSwipe={true}
@@ -39,17 +38,12 @@ function HomeScreen(props) {
                     }
                     renderHiddenItem={(data, rowMap) => (
                         <View style={styles.rowBack}>
-                            <View
-                                style={{backgroundColor: "aqua"}}>
                             <Button
                                 title={'Edit'} 
                             />
-                            </View>
-                            <View style={{backgroundColor: "red"}}>
                             <Button
                                 title={'Delete'}
                             />
-                            </View>
                         </View>
                     )}
                 />

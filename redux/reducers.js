@@ -5,7 +5,10 @@ const initialState = {
     authToken: null,
     currActType: null,
     monthChartData: [],
-    chartData: null,
+    chartData: {
+        hasData: false,
+        data: {}
+    }
 }
 
 function signIn(action) {
@@ -13,6 +16,16 @@ function signIn(action) {
         isSignedIn: true,
         authToken: action.authToken
     };
+}
+
+function chartData(state = initialState.chartData, action){
+    switch (action.type) {
+        case 'receive_chart_data':
+            return Object.assign({}, state, {
+                data: action.data,
+                hasData: true,
+            });
+    }
 }
 
 function rootReducer(state = initialState, action) {
@@ -27,13 +40,9 @@ function rootReducer(state = initialState, action) {
             return Object.assign({}, state, {
                 currActType: action.new_act_type
             });
-        case 'get_chart_data':
+        case 'receive_chart_data':
             return Object.assign({}, state, {
-                chartData: action.data,
-            });
-        case 'set_chart_data':
-            return Object.assign({}, state, {
-                chartData: action.data,
+                chartData: chartData(state.chartData, action)
             });
         default:
             return state;

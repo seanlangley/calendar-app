@@ -19,7 +19,7 @@ export function setActType(new_type) {
 
 export function setChartData(data) {
     return {
-        type: 'set_chart_data',
+        type: 'receive_chart_data',
         data: data,
     }
 }

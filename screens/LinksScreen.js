@@ -47,7 +47,7 @@ function LinksScreen(props) {
         var dropdown_data = [];
         var activity_types = {};
 
-        Object.keys(props.chartData).forEach(act_name => {
+        Object.keys(props.chartData.data).forEach(act_name => {
             marked_dates[act_name] = {};
             daysToPost[act_name] = {};
             activeDays[act_name] = {};
@@ -164,6 +164,10 @@ function LinksScreen(props) {
             title={isLoading ? "" : "Submit"}
             onPress={() => {
                 check_fetch('create_activities', 'POST', props.authToken, daysToPost)
+                .then(() => {
+                    props.dispatch(actions.fetchChartData(props.authToken))
+                    .then(console.log('got chart data'));
+                })
                 .catch(error => console.error(error));
             }}
             />
