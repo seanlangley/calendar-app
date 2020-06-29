@@ -56,14 +56,17 @@ function HomeScreen(props) {
             <Button
                 title={"Submit New Activity"}
                 onPress={() => {
-                    check_fetch('api/new_act', 'POST', props.authToken, { name: newType });
-                    props.dispatch(actions.setChartData(null));
+                    check_fetch('api/new_act', 'POST', props.authToken, { name: newType })
+                    .then(() => {
+                        props.dispatch(actions.fetchChartData(props.authToken))
+                        .then(console.log('got chart data'));
+                    });
                 }}
             />
             <Button
                 title={"Sign out"}
                 onPress={() => {
-                    props.dispatch(actions.setChartData(null));
+                    props.dispatch(actions.invalidateChartData());
                     props.dispatch(actions.signOut());
                 }}
             />

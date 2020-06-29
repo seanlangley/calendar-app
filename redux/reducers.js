@@ -25,6 +25,11 @@ function chartData(state = initialState.chartData, action){
                 data: action.data,
                 hasData: true,
             });
+        case 'invalidate_chart_data':
+            return Object.assign({}, state, {
+                data: {},
+                hasData: false
+            })
     }
 }
 
