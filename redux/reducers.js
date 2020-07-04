@@ -35,22 +35,31 @@ function chartData(state = initialState.chartData, action) {
     }
 }
 
+function manageActList(state = {}, action){
+    switch(action.type){
+        case 'update_act':
+            let new_act = {};
+            new_act[action.day] = {was_done: true};
+            return Object.assign({}, state, new_act);
+    }
+}
+
 function manageActs(state = initialState.actTypes, action) {
     switch (action.type) {
         case 'add_act_type':
             var new_act_info = {}
             new_act_info[action.name] = {
                 name: action.name,
-                acts: []
+                acts: {}
             };
             return Object.assign({}, state, new_act_info);
-        case 'add_act':
-            var curr_act_info;
-            state.forEach(type_info => {
-                if (type_info.name == action.name){
-                    curr_act_info = type_info;
-                }
-            });
+        case 'update_act':
+            var acts_of_type = {};
+            acts_of_type[action.name] = Object.assign({}, state[action.name]);
+            acts_of_type[action.name].acts = manageActList(state[action.name].acts, action);
+            return Object.assign({}, state, acts_of_type);
+        case 'delete_act':
+            return;
     }
 }
 
@@ -67,6 +76,8 @@ function rootReducer(state = initialState, action) {
                 currActType: action.new_act_type
             });
         case 'add_act_type':
+        case 'update_act':
+        case 'delete_act':
             return Object.assign({}, state, {
                 actTypes: manageActs(state.actTypes, action)
             });

@@ -52,18 +52,18 @@ function LinksScreen(props) {
         daysToPost[data.name] = {};
         activeDays[data.name] = {};
 
-        data.acts.forEach(act => {
+        Object.keys(data.acts).forEach(day => {
             if (!(data.name in activity_types)) {
                 activity_types[data.name] = [];
             }
-            activity_types[data.name].push(act);
-            activeDays[data.name][new Date(act.day).getTime()] = true;
+            activity_types[data.name].push(data.acts[day]);
+            activeDays[data.name][new Date(day).getTime()] = true;
         });
 
-        data.acts.forEach((act, idx) => {
+        Object.keys(data.acts).forEach((day, idx) => {
             var curr_ms = new Date(acts[idx].day).getTime();
-            marked_dates[name][act.day] = {
-                'color': act.was_done ? 'green' : 'red',
+            marked_dates[name][day] = {
+                'color': data.act[day].was_done ? 'green' : 'red',
                 'startingDay': is_start_day(curr_ms, act_name),
                 'endingDay': is_end_day(curr_ms, act_name),
             };
@@ -137,6 +137,12 @@ function LinksScreen(props) {
                             'endingDay': is_end_day(pressed_day_ms, currActType),
                         };
                         setMarkedDates(marked_dates);
+
+                        props.dispatch(actions.postAct({
+                            day: pressed_day.dateString,
+                            action: post_action,
+                            name: props.currActType
+                        }));
                     }}
                 />
             )}

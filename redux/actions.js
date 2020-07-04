@@ -17,6 +17,17 @@ export function setActType(new_type) {
     }
 }
 
+export function postAct(post_info){
+   // let type = post_info == 'delete' ? 'delete_act' : 'update_act';
+    let type = 'update_act';
+    return {
+        type: type,
+        day: post_info.day,
+        action: post_info.action,
+        name: post_info.name,
+    }
+}
+
 export function addActType(name){
     return {
         type: 'add_act_type',
