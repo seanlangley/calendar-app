@@ -19,35 +19,6 @@ function HomeScreen(props) {
 
     return (
         <View style={styles.container}>
-            {props.chartData == null ? <ActivityIndicator /> : (
-                <SwipeListView
-                    data={Object.keys(props.chartData.data)}
-                    keyExtractor={item => item}
-                    rightOpenValue={-150}
-                    disableRightSwipe={true}
-                    renderItem={({ item }) =>
-                        <View style={styles.rowFront}>
-                            <Button
-                                title={item}
-                                onPress={() => {
-                                    props.dispatch(actions.setActType(item));
-                                    props.navigation.navigate('TypeDetail');
-                                }}
-                            />
-                        </View>
-                    }
-                    renderHiddenItem={(data, rowMap) => (
-                        <View style={styles.rowBack}>
-                            <Button
-                                title={'Edit'} 
-                            />
-                            <Button
-                                title={'Delete'}
-                            />
-                        </View>
-                    )}
-                />
-            )}
             <native.TextInput
                 placeholder="New Acvitity Name"
                 value={newType}
@@ -75,6 +46,40 @@ function HomeScreen(props) {
                     <DevelopmentModeNotice />
                 </View>
             </View>
+            {props.chartData == null ? <ActivityIndicator /> : (
+                <SwipeListView
+                    data={Object.keys(props.chartData.data)}
+                    keyExtractor={item => item}
+                    rightOpenValue={-150}
+                    disableRightSwipe={true}
+                    renderItem={({ item }) =>
+                        <View style={styles.rowFront}>
+                            <Button
+                                title={item}
+                                onPress={() => {
+                                    props.dispatch(actions.setActType(item));
+                                    props.navigation.navigate('TypeDetail');
+                                }}
+                            />
+                        </View>
+                    }
+                    renderHiddenItem={(data, rowMap) => (
+                        <View style={styles.rowBack}>
+                            <Button
+                                title={'Edit'} 
+                            />
+                            <Button
+                                title={'Delete'}
+                                onPress={() => {
+                                    check_fetch('api/delete_type', 'POST', props.authToken, {name: data.item})
+                                    .then(() => props.dispatch(actions.fetchChartData(props.authToken)))
+                                    .then(console.log('got chart data'));
+                                }}
+                            />
+                        </View>
+                    )}
+                />
+            )}
         </View>
     );
 }
