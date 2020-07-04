@@ -9,7 +9,7 @@ const initialState = {
         hasData: false,
         data: {}
     },
-    actTypes: [],
+    actTypes: {},
     currTypeIdx: -1,
 }
 
@@ -38,10 +38,12 @@ function chartData(state = initialState.chartData, action) {
 function manageActs(state = initialState.actTypes, action) {
     switch (action.type) {
         case 'add_act_type':
-            return [...state, {
+            var new_act_info = {}
+            new_act_info[action.name] = {
                 name: action.name,
-                acts: [],
-            }];
+                acts: []
+            };
+            return Object.assign({}, state, new_act_info);
         case 'add_act':
             var curr_act_info;
             state.forEach(type_info => {

@@ -72,13 +72,7 @@ function LinksScreen(props) {
     }
 
     useEffect(() => {
-        var data;
-        props.actTypes.forEach(type_info => {
-            if (type_info.name == props.currActType){
-                data = type_info;
-            }
-        });
-        initialize_data(data);
+        initialize_data(props.actTypes[props.currActType]);
         setLoading(false);
     }, []);
 
