@@ -19,13 +19,10 @@ const storeData = async (value) => {
 
 function HomeScreen(props) {
     const [newType, setNewType] = useState('');
+    const [types, setTypes] = useState([]);
 
     useEffect(() => {
-        if (props.chartData.hasData == false) {
-            props.dispatch(actions.fetchChartData(props.authToken))
-            .then(console.log('got chart data'));
-        }
-        storeData('hello');
+
     });
 
     return (
@@ -38,18 +35,9 @@ function HomeScreen(props) {
             <Button
                 title={"Submit New Activity"}
                 onPress={() => {
-                    check_fetch('api/new_act', 'POST', props.authToken, { name: newType })
-                    .then(() => {
-                        props.dispatch(actions.fetchChartData(props.authToken))
-                        .then(console.log('got chart data'));
-                    });
-                }}
-            />
-            <Button
-                title={"Sign out"}
-                onPress={() => {
-                    props.dispatch(actions.invalidateChartData());
-                    props.dispatch(actions.signOut());
+                    if (types.indexOf(newType) == -1){
+                        setTypes([...types, newType]); 
+                    }
                 }}
             />
             <View style={styles.container} contentContainerStyle={styles.contentContainer}>
@@ -59,7 +47,7 @@ function HomeScreen(props) {
             </View>
             {props.chartData == null ? <ActivityIndicator /> : (
                 <SwipeListView
-                    data={Object.keys(props.chartData.data)}
+                    data={types}
                     keyExtractor={item => item}
                     rightOpenValue={-150}
                     disableRightSwipe={true}
