@@ -6,6 +6,16 @@ import * as actions from '../redux/actions';
 import { mapStateToProps } from '../redux/react_funcs';
 import { check_fetch } from '../utils/utils';
 import { SwipeListView } from 'react-native-swipe-list-view';
+import AsyncStorage from '@react-native-community/async-storage';
+
+
+const storeData = async (value) => {
+    try {
+      await AsyncStorage.setItem('@storage_Key', value)
+    } catch (e) {
+      console.error(e);
+    }
+  }
 
 function HomeScreen(props) {
     const [newType, setNewType] = useState('');
@@ -15,6 +25,7 @@ function HomeScreen(props) {
             props.dispatch(actions.fetchChartData(props.authToken))
             .then(console.log('got chart data'));
         }
+        storeData('hello');
     });
 
     return (

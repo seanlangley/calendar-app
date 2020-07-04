@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { Button, StyleSheet, Text, View, ActivityIndicator } from 'react-native';
+import * as native from 'react-native';
 import { ScrollView } from 'react-native-gesture-handler';
 import { Calendar } from 'react-native-calendars';
-import {connect} from 'react-redux';
+import { connect } from 'react-redux';
 import { mapStateToProps } from '../redux/react_funcs';
 import * as actions from '../redux/actions';
-import {check_fetch} from '../utils/utils';
+import { check_fetch } from '../utils/utils';
 
 var use_server = true;
 var url;
@@ -19,24 +20,26 @@ var daysToPost = {}
 function LinksScreen(props) {
     const [isLoading, setLoading] = useState(true);
     const [markedDates, setMarkedDates] = useState({});
+    const [actTree, setActTree] = useState();
+    const [numberEntry, setNumberEntry] = useState(0);
 
-    function is_day_active(day_in_ms, act_name){
-        if (!(day_in_ms in activeDays[act_name])){
+    function is_day_active(day_in_ms, act_name) {
+        if (!(day_in_ms in activeDays[act_name])) {
             activeDays[act_name][day_in_ms] = false;
         }
         return activeDays[act_name][day_in_ms];
     }
-    function set_is_day_active(value, day_in_ms, act_name){
+    function set_is_day_active(value, day_in_ms, act_name) {
         activeDays[act_name][day_in_ms] = value;
     }
 
-    function is_start_day(day_ms, act_name){
+    function is_start_day(day_ms, act_name) {
         //A day is a start day if the prev day is not active
         var prev = Math.round(day_ms - msPerDay);
         return !is_day_active(prev, act_name);
     }
 
-    function is_end_day(day_ms, act_name){
+    function is_end_day(day_ms, act_name) {
         //A day is an end day if the next day is not active
         var next = Math.round(day_ms + msPerDay);
         return !is_day_active(next, act_name);
@@ -44,7 +47,6 @@ function LinksScreen(props) {
 
     function initialize_data(data) {
         var marked_dates = {};
-        var dropdown_data = [];
         var activity_types = {};
 
         Object.keys(props.chartData.data).forEach(act_name => {
@@ -62,7 +64,6 @@ function LinksScreen(props) {
         });
 
         Object.keys(activity_types).forEach(act_name => {
-            dropdown_data.push({label: act_name});
             marked_dates[act_name] = {};
             var curr_act_type = activity_types[act_name];
 
@@ -78,14 +79,41 @@ function LinksScreen(props) {
         setMarkedDates(marked_dates);
     }
 
+    function _init(act_tree) {
+        var marked_dates = {};
+        var activity_types = {};
+        Object.keys(act_tree.types).forEach(act_name => {
+            marked_dates[act_name] = {};
+            daysToPost[act_name] = {};
+            activeDays[act_name] = {};
+            activity_types[act_name] = [];
+
+            act_tree.types[act_name].acts.forEach((act, idx) => {
+                activity_types[act_name].push(act);
+                activeDays[act_name][new Date(act.day).getTime()] = true;
+                var curr_ms = new Date(act.day).getTime();
+                marked_dates[act_name][act.day] = {
+                    'color': act.was_done ? 'green' : 'red',
+                    'startingDay': is_start_day(curr_ms, act_name),
+                    'endingDay': is_end_day(curr_ms, act_name),
+                };
+            });
+        });
+    }
+
     if (use_server) {
         useEffect(() => {
             check_fetch('activities/', 'GET', props.authToken)
-            .then(json => {
-                initialize_data(json);
-                setLoading(false);
-            })
-            .catch(error => console.error(error));
+                .then(json => {
+                    initialize_data(json);
+                })
+                .catch(e => console.error(e));
+            check_fetch('api/activities', 'GET', props.authToken)
+                .then(json => {
+                    setActTree(json);
+                    setLoading(false);
+                })
+                .catch(error => console.error(error));
         }, []);
     }
     else {
@@ -118,7 +146,7 @@ function LinksScreen(props) {
                         var next_day_state;
                         var post_action;
 
-                        if (curr_color == 'white'){
+                        if (curr_color == 'white') {
                             next_color = 'green';
                             should_be_active = true;
                             prev_day_state = false;
@@ -126,12 +154,12 @@ function LinksScreen(props) {
                             post_action = "was_done";
 
                         }
-                        else if(curr_color == 'green'){
+                        else if (curr_color == 'green') {
                             next_color = 'red';
                             should_be_active = true;
                             post_action = "not_done";
                         }
-                        else if(curr_color == 'red'){
+                        else if (curr_color == 'red') {
                             next_color = 'white';
                             should_be_active = false;
                             prev_day_state = true;
@@ -143,10 +171,10 @@ function LinksScreen(props) {
                         }
                         daysToPost[currActType][pressed_day.dateString] = post_action;
 
-                        if (is_day_active(prev_day_ms, currActType) && prev_day_state != undefined){
+                        if (is_day_active(prev_day_ms, currActType) && prev_day_state != undefined) {
                             marked_dates[currActType][prev_day_isostr]['endingDay'] = prev_day_state;
                         }
-                        if (is_day_active(next_day_ms, currActType) && next_day_state != undefined){
+                        if (is_day_active(next_day_ms, currActType) && next_day_state != undefined) {
                             marked_dates[currActType][next_day_isostr]['startingDay'] = next_day_state;;
                         }
                         set_is_day_active(should_be_active, pressed_day_ms, currActType);
@@ -161,15 +189,15 @@ function LinksScreen(props) {
             )}
             <Text>Currently viewing activities for {props.currActType}</Text>
             <Button
-            title={isLoading ? "" : "Submit"}
-            onPress={() => {
-                check_fetch('create_activities', 'POST', props.authToken, daysToPost)
-                .then(() => {
-                    props.dispatch(actions.fetchChartData(props.authToken))
-                    .then(console.log('got chart data'));
-                })
-                .catch(error => console.error(error));
-            }}
+                title={isLoading ? "" : "Submit"}
+                onPress={() => {
+                    check_fetch('create_activities', 'POST', props.authToken, daysToPost)
+                        .then(() => {
+                            props.dispatch(actions.fetchChartData(props.authToken))
+                                .then(console.log('got chart data'));
+                        })
+                        .catch(error => console.error(error));
+                }}
             />
         </ScrollView>
     );
