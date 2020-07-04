@@ -10,8 +10,13 @@ function ActDetailScreen(props) {
     const [week_data, set_week_data] = useState([]);
 
     useEffect(() => {
-        set_week_data(props.chartData.data[props.currActType].week);
-        set_month_data(props.chartData.data[props.currActType].month);
+        try{
+            set_week_data(props.chartData.data[props.currActType].week);
+            set_month_data(props.chartData.data[props.currActType].month);
+        }
+        catch(e){
+            console.warn(e);
+        }
 
     }, []);
     return (

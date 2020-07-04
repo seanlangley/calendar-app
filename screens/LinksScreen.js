@@ -20,7 +20,7 @@ var daysToPost = {}
 function LinksScreen(props) {
     const [isLoading, setLoading] = useState(true);
     const [markedDates, setMarkedDates] = useState({});
-    const [actTree, setActTree] = useState();
+    //const [actTree, setActTree] = useState();
     const [numberEntry, setNumberEntry] = useState(0);
 
     function is_day_active(day_in_ms, act_name) {
@@ -48,80 +48,39 @@ function LinksScreen(props) {
     function initialize_data(data) {
         var marked_dates = {};
         var activity_types = {};
+        marked_dates[data.name] = {};
+        daysToPost[data.name] = {};
+        activeDays[data.name] = {};
 
-        Object.keys(props.chartData.data).forEach(act_name => {
-            marked_dates[act_name] = {};
-            daysToPost[act_name] = {};
-            activeDays[act_name] = {};
-        });
-        data.forEach(act => {
-            var act_type = act.act_type;
-            if (!(act_type.name in activity_types)) {
-                activity_types[act_type.name] = [];
+        data.acts.forEach(act => {
+            if (!(data.name in activity_types)) {
+                activity_types[data.name] = [];
             }
-            activity_types[act_type.name].push(act);
-            activeDays[act_type.name][new Date(act.day).getTime()] = true;
+            activity_types[data.name].push(act);
+            activeDays[data.name][new Date(act.day).getTime()] = true;
         });
 
-        Object.keys(activity_types).forEach(act_name => {
-            marked_dates[act_name] = {};
-            var curr_act_type = activity_types[act_name];
-
-            curr_act_type.forEach((act, idx) => {
-                var curr_ms = new Date(curr_act_type[idx].day).getTime();
-                marked_dates[act.act_type.name][act.day] = {
-                    'color': act.was_done ? 'green' : 'red',
-                    'startingDay': is_start_day(curr_ms, act_name),
-                    'endingDay': is_end_day(curr_ms, act_name),
-                };
-            });
+        data.acts.forEach((act, idx) => {
+            var curr_ms = new Date(acts[idx].day).getTime();
+            marked_dates[name][act.day] = {
+                'color': act.was_done ? 'green' : 'red',
+                'startingDay': is_start_day(curr_ms, act_name),
+                'endingDay': is_end_day(curr_ms, act_name),
+            };
         });
         setMarkedDates(marked_dates);
     }
 
-    function _init(act_tree) {
-        var marked_dates = {};
-        var activity_types = {};
-        Object.keys(act_tree.types).forEach(act_name => {
-            marked_dates[act_name] = {};
-            daysToPost[act_name] = {};
-            activeDays[act_name] = {};
-            activity_types[act_name] = [];
-
-            act_tree.types[act_name].acts.forEach((act, idx) => {
-                activity_types[act_name].push(act);
-                activeDays[act_name][new Date(act.day).getTime()] = true;
-                var curr_ms = new Date(act.day).getTime();
-                marked_dates[act_name][act.day] = {
-                    'color': act.was_done ? 'green' : 'red',
-                    'startingDay': is_start_day(curr_ms, act_name),
-                    'endingDay': is_end_day(curr_ms, act_name),
-                };
-            });
+    useEffect(() => {
+        var data;
+        props.actTypes.forEach(type_info => {
+            if (type_info.name == props.currActType){
+                data = type_info;
+            }
         });
-    }
-
-    if (use_server) {
-        useEffect(() => {
-            check_fetch('activities/', 'GET', props.authToken)
-                .then(json => {
-                    initialize_data(json);
-                })
-                .catch(e => console.error(e));
-            check_fetch('api/activities', 'GET', props.authToken)
-                .then(json => {
-                    setActTree(json);
-                    setLoading(false);
-                })
-                .catch(error => console.error(error));
-        }, []);
-    }
-    else {
-        useEffect(() => {
-            initialize_data(DATA);
-            setLoading(false);
-        }, []);
-    }
+        initialize_data(data);
+        setLoading(false);
+    }, []);
 
     return (
         <ScrollView style={styles.container} contentContainerStyle={styles.contentContainer}>
@@ -189,14 +148,9 @@ function LinksScreen(props) {
             )}
             <Text>Currently viewing activities for {props.currActType}</Text>
             <Button
-                title={isLoading ? "" : "Submit"}
+                title={ "Submit"}
                 onPress={() => {
-                    check_fetch('create_activities', 'POST', props.authToken, daysToPost)
-                        .then(() => {
-                            props.dispatch(actions.fetchChartData(props.authToken))
-                                .then(console.log('got chart data'));
-                        })
-                        .catch(error => console.error(error));
+                    return;
                 }}
             />
         </ScrollView>

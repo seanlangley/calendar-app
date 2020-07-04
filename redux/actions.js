@@ -17,6 +17,13 @@ export function setActType(new_type) {
     }
 }
 
+export function addActType(name){
+    return {
+        type: 'add_act_type',
+        name: name,
+    }
+}
+
 export function invalidateChartData(){
     return {
         type: 'invalidate_chart_data'

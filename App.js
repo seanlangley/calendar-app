@@ -3,7 +3,7 @@ import thunkMiddleware from 'redux-thunk'
 import { createLogger } from 'redux-logger'
 import { createStore, applyMiddleware } from 'redux'
 import { createStackNavigator } from '@react-navigation/stack';
-import React, {useState, setState} from 'react';
+import React, { useState, setState } from 'react';
 import { Platform, StatusBar, StyleSheet, View, Text } from 'react-native';
 import { Provider, connect } from 'react-redux';
 
@@ -38,14 +38,8 @@ export default function App(props) {
                     {Platform.OS === 'ios' && <StatusBar barStyle="dark-content" />}
                     <NavigationContainer linking={LinkingConfiguration}>
                         <Stack.Navigator>
-                            {isSignedIn ? (
-                                <>
-                                    <Stack.Screen name="Home" component={HomeScreen} />
-                                    <Stack.Screen name="TypeDetail" component={BottomTabNavigator} />
-                                </>
-                            ) : (
-                                    <Stack.Screen name="Login" component={LoginScreen} />
-                                )}
+                            <Stack.Screen name="Home" component={HomeScreen} />
+                            <Stack.Screen name="TypeDetail" component={BottomTabNavigator} />
                         </Stack.Navigator>
                     </NavigationContainer>
                 </View>

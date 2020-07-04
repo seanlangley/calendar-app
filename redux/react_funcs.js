@@ -6,5 +6,6 @@ export const mapStateToProps = (state, ownProps) => {
         monthChartData: state.monthChartData,
         loading: state.loading,
         chartData: state.chartData,
+        actTypes: state.actTypes,
     };
 };

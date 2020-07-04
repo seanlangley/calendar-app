@@ -37,6 +37,7 @@ function HomeScreen(props) {
                 onPress={() => {
                     if (types.indexOf(newType) == -1){
                         setTypes([...types, newType]); 
+                        props.dispatch(actions.addActType(newType));
                     }
                 }}
             />

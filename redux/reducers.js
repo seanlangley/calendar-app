@@ -8,7 +8,9 @@ const initialState = {
     chartData: {
         hasData: false,
         data: {}
-    }
+    },
+    actTypes: [],
+    currTypeIdx: -1,
 }
 
 function signIn(action) {
@@ -45,6 +47,14 @@ function rootReducer(state = initialState, action) {
             return Object.assign({}, state, {
                 currActType: action.new_act_type
             });
+        case 'add_act_type':
+            return Object.assign({}, state, {
+                actTypes: [...state.actTypes,
+                {
+                    name: action.name,
+                    acts: [],
+                }
+            ]})
         case 'receive_chart_data':
             return Object.assign({}, state, {
                 chartData: chartData(state.chartData, action)

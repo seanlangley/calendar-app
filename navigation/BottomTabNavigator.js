@@ -6,7 +6,7 @@ import LinksScreen from '../screens/LinksScreen';
 import ActDetailScreen from '../screens/ActDetailScreen';
 
 const BottomTab = createBottomTabNavigator();
-const INITIAL_ROUTE_NAME = 'Charts';
+const INITIAL_ROUTE_NAME = 'Calendar';
 
 export default function BottomTabNavigator({ navigation, route }) {
   // Set the header title on the parent stack navigator depending on the
