@@ -20,7 +20,7 @@ function signIn(action) {
     };
 }
 
-function chartData(state = initialState.chartData, action){
+function chartData(state = initialState.chartData, action) {
     switch (action.type) {
         case 'receive_chart_data':
             return Object.assign({}, state, {
@@ -32,6 +32,23 @@ function chartData(state = initialState.chartData, action){
                 data: {},
                 hasData: false
             })
+    }
+}
+
+function manageActs(state = initialState.actTypes, action) {
+    switch (action.type) {
+        case 'add_act_type':
+            return [...state, {
+                name: action.name,
+                acts: [],
+            }];
+        case 'add_act':
+            var curr_act_info;
+            state.forEach(type_info => {
+                if (type_info.name == action.name){
+                    curr_act_info = type_info;
+                }
+            });
     }
 }
 
@@ -49,12 +66,8 @@ function rootReducer(state = initialState, action) {
             });
         case 'add_act_type':
             return Object.assign({}, state, {
-                actTypes: [...state.actTypes,
-                {
-                    name: action.name,
-                    acts: [],
-                }
-            ]})
+                actTypes: manageActs(state.actTypes, action)
+            });
         case 'receive_chart_data':
             return Object.assign({}, state, {
                 chartData: chartData(state.chartData, action)
