@@ -18,14 +18,18 @@ export function setActType(new_type) {
 }
 
 export function postAct(post_info){
-   // let type = post_info == 'delete' ? 'delete_act' : 'update_act';
-    let type = 'update_act';
-    return {
-        type: type,
+    var return_val = {
         day: post_info.day,
-        action: post_info.action,
-        name: post_info.name,
+        name: post_info.name
+    };
+    if (post_info.action == 'delete'){
+        return_val.type = 'delete_act';
     }
+    else {
+        return_val.type = 'update_act';
+        return_val.was_done = post_info.action == 'was_done' ? true : false;
+    }
+    return return_val;
 }
 
 export function addActType(name){

@@ -39,8 +39,13 @@ function manageActList(state = {}, action){
     switch(action.type){
         case 'update_act':
             let new_act = {};
-            new_act[action.day] = {was_done: true};
+            new_act[action.day] = {was_done: action.was_done};
             return Object.assign({}, state, new_act);
+        case 'delete_act':
+            let act_copy = Object.assign({}, state);
+            delete act_copy[action.day];
+            return act_copy;
+
     }
 }
 
@@ -54,12 +59,11 @@ function manageActs(state = initialState.actTypes, action) {
             };
             return Object.assign({}, state, new_act_info);
         case 'update_act':
+        case 'delete_act':
             var acts_of_type = {};
             acts_of_type[action.name] = Object.assign({}, state[action.name]);
             acts_of_type[action.name].acts = manageActList(state[action.name].acts, action);
             return Object.assign({}, state, acts_of_type);
-        case 'delete_act':
-            return;
     }
 }
 
