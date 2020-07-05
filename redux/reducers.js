@@ -11,7 +11,20 @@ const initialState = {
     },
     actTypes: {},
     currTypeIdx: -1,
+};
+
+/*
+actTypes => indexed by 'name'
+{
+    'name': string,
+    'acts': {} => indexed by ISO day
 }
+activity 
+{
+    'was_done': bool
+}
+*/
+
 
 function signIn(action) {
     return {
