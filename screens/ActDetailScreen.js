@@ -8,7 +8,6 @@ import { mapStateToProps } from '../redux/react_funcs';
 const moment = require('moment');
 moment.locale('en');
 
-
 function ActDetailScreen(props) {
     const [month_data, set_month_data] = useState([]);
     const [week_data, set_week_data] = useState([]);
@@ -40,14 +39,20 @@ function ActDetailScreen(props) {
             if (ratio == Infinity || isNaN(ratio)){
                 ratio = 0;
             }
-            weekdays_ratios[i] = Number.parseFloat(ratio).toFixed(2);
+            weekdays_ratios[i] = {
+                weekday: i,
+                ratio: ratio
+            };
         }
         for (let i = 0; i < 12; i++){
             var ratio = monthdays_true[i] / monthdays_recorded[i];
             if (ratio == Infinity || isNaN(ratio)){
                 ratio = 0;
             }
-            monthdays_ratios[i] = Number.parseFloat(ratio).toFixed(2);
+            monthdays_ratios[i] = {
+                month: i,
+                ratio: ratio
+            };
         }
         set_month_data(monthdays_ratios);
         set_week_data(weekdays_ratios);
@@ -55,7 +60,7 @@ function ActDetailScreen(props) {
     return (
         <native.View>
                 <ScrollView>
-                    <MonthChart name={props.currActType} data={month_data} />
+                    <MonthChart data={month_data} />
                     <WeekChart data={week_data} />
                 </ScrollView>
         </native.View>

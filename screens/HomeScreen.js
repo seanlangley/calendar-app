@@ -6,24 +6,19 @@ import * as actions from '../redux/actions';
 import { mapStateToProps } from '../redux/react_funcs';
 import { check_fetch } from '../utils/utils';
 import { SwipeListView } from 'react-native-swipe-list-view';
-import AsyncStorage from '@react-native-community/async-storage';
 
-
-const storeData = async (value) => {
-    try {
-      await AsyncStorage.setItem('@storage_Key', value)
-    } catch (e) {
-      console.error(e);
-    }
-  }
 
 function HomeScreen(props) {
     const [newType, setNewType] = useState('');
-    const [types, setTypes] = useState([]);
+    const [types, setTypes] = useState();
 
     useEffect(() => {
-
-    });
+        var next_types = [];
+        Object.keys(props.actTypes).forEach((type_name) => {
+            next_types.push(type_name);
+        });
+        setTypes(next_types);
+    }, [props.actTypes]);
 
     return (
         <View style={styles.container}>
@@ -35,51 +30,42 @@ function HomeScreen(props) {
             <Button
                 title={"Submit New Activity"}
                 onPress={() => {
-                    if (types.indexOf(newType) == -1){
-                        setTypes([...types, newType]); 
+                    if (types.indexOf(newType) == -1 && newType.length > 0) {
                         props.dispatch(actions.addActType(newType));
                     }
                 }}
             />
-            <View style={styles.container} contentContainerStyle={styles.contentContainer}>
-                <View style={styles.getStartedContainer}>
-                    <DevelopmentModeNotice />
-                </View>
-            </View>
-            {props.chartData == null ? <ActivityIndicator /> : (
-                <SwipeListView
-                    data={types}
-                    keyExtractor={item => item}
-                    rightOpenValue={-150}
-                    disableRightSwipe={true}
-                    renderItem={({ item }) =>
-                        <View style={styles.rowFront}>
-                            <Button
-                                title={item}
-                                onPress={() => {
-                                    props.dispatch(actions.setActType(item));
-                                    props.navigation.navigate('TypeDetail');
-                                }}
-                            />
-                        </View>
-                    }
-                    renderHiddenItem={(data, rowMap) => (
-                        <View style={styles.rowBack}>
-                            <Button
-                                title={'Edit'} 
-                            />
-                            <Button
-                                title={'Delete'}
-                                onPress={() => {
-                                    check_fetch('api/delete_type', 'POST', props.authToken, {name: data.item})
-                                    .then(() => props.dispatch(actions.fetchChartData(props.authToken)))
-                                    .then(console.log('got chart data'));
-                                }}
-                            />
-                        </View>
-                    )}
-                />
-            )}
+            <SwipeListView
+                data={types}
+                keyExtractor={item => item}
+                rightOpenValue={-150}
+                disableRightSwipe={true}
+                renderItem={({ item }) =>
+                    <View style={styles.rowFront}>
+                        <Button
+                            title={item}
+                            onPress={() => {
+                                props.dispatch(actions.setActType(item));
+                                props.navigation.navigate('TypeDetail');
+                            }}
+                        />
+                    </View>
+                }
+                renderHiddenItem={(data, rowMap) => (
+                    <View style={styles.rowBack}>
+                        <Button
+                            title={'Edit'}
+                            onPress={() => {
+                            }}
+                        />
+                        <Button
+                            title={'Delete'}
+                            onPress={() => {
+                            }}
+                        />
+                    </View>
+                )}
+            />
         </View>
     );
 }

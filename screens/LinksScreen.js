@@ -1,18 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { Button, StyleSheet, Text, View, ActivityIndicator } from 'react-native';
-import * as native from 'react-native';
 import { ScrollView } from 'react-native-gesture-handler';
 import { Calendar } from 'react-native-calendars';
 import { connect } from 'react-redux';
 import { mapStateToProps } from '../redux/react_funcs';
 import * as actions from '../redux/actions';
-import { check_fetch } from '../utils/utils';
 
-var use_server = true;
-var url;
-if (use_server) {
-    url = 'http://localhost:8000/activities/';
-}
 let msPerDay = 24 * 60 * 60 * 1000;
 var activeDays = {}
 var daysToPost = {}
@@ -20,8 +13,6 @@ var daysToPost = {}
 function LinksScreen(props) {
     const [isLoading, setLoading] = useState(true);
     const [markedDates, setMarkedDates] = useState({});
-    //const [actTree, setActTree] = useState();
-    const [numberEntry, setNumberEntry] = useState(0);
 
     function is_day_active(day_in_ms, act_name) {
         if (!(day_in_ms in activeDays[act_name])) {
@@ -60,20 +51,22 @@ function LinksScreen(props) {
             activeDays[data.name][new Date(day).getTime()] = true;
         });
 
-        Object.keys(data.acts).forEach((day, idx) => {
-            var curr_ms = new Date(acts[idx].day).getTime();
-            marked_dates[name][day] = {
-                'color': data.act[day].was_done ? 'green' : 'red',
-                'startingDay': is_start_day(curr_ms, act_name),
-                'endingDay': is_end_day(curr_ms, act_name),
+        Object.keys(data.acts).forEach((day) => {
+            var curr_ms = new Date(day).getTime();
+            marked_dates[props.currActType][day] = {
+                'color': data.acts[day].was_done ? 'green' : 'red',
+                'startingDay': is_start_day(curr_ms, props.currActType),
+                'endingDay': is_end_day(curr_ms, props.currActType),
             };
         });
         setMarkedDates(marked_dates);
     }
 
     useEffect(() => {
-        initialize_data(props.actTypes[props.currActType]);
-        setLoading(false);
+        if (isLoading) {
+            initialize_data(props.actTypes[props.currActType]);
+            setLoading(false);
+        }
     }, []);
 
     return (
@@ -146,13 +139,6 @@ function LinksScreen(props) {
                     }}
                 />
             )}
-            <Text>Currently viewing activities for {props.currActType}</Text>
-            <Button
-                title={ "Submit"}
-                onPress={() => {
-                    return;
-                }}
-            />
         </ScrollView>
     );
 }
@@ -168,63 +154,4 @@ const styles = StyleSheet.create({
         paddingTop: 15,
     },
 });
-
-if (!use_server) {
-    var DATA = [
-        {
-            "day": "2020-06-19",
-            "was_done": true,
-            "act_type": {
-                "url": "http://localhost:8000/activity_types/2/",
-                "name": "drank_alcohol",
-                "user": "http://localhost:8000/users/1/"
-            }
-        },
-        {
-            "day": "2020-06-20",
-            "was_done": true,
-            "act_type": {
-                "url": "http://localhost:8000/activity_types/1/",
-                "name": "workout",
-                "user": "http://localhost:8000/users/1/"
-            }
-        },
-        {
-            "day": "2020-06-20",
-            "was_done": true,
-            "act_type": {
-                "url": "http://localhost:8000/activity_types/2/",
-                "name": "drank_alcohol",
-                "user": "http://localhost:8000/users/1/"
-            }
-        },
-        {
-            "day": "2020-06-21",
-            "was_done": true,
-            "act_type": {
-                "url": "http://localhost:8000/activity_types/1/",
-                "name": "workout",
-                "user": "http://localhost:8000/users/1/"
-            }
-        },
-        {
-            "day": "2020-06-21",
-            "was_done": true,
-            "act_type": {
-                "url": "http://localhost:8000/activity_types/2/",
-                "name": "drank_alcohol",
-                "user": "http://localhost:8000/users/1/"
-            }
-        },
-        {
-            "day": "2020-06-23",
-            "was_done": true,
-            "act_type": {
-                "url": "http://localhost:8000/activity_types/1/",
-                "name": "workout",
-                "user": "http://localhost:8000/users/1/"
-            }
-        }
-    ]
-}
 

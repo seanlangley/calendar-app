@@ -18,7 +18,6 @@ for (var i = 0; i < 7; i++){
 export function MonthChart(props){
     return (
         <View>
-            <Text>{props.name}</Text>
             <VictoryChart>
             <VictoryAxis
             tickValues={month_indices}
@@ -41,7 +40,6 @@ export function MonthChart(props){
 export function WeekChart(props){
     return (
         <View>
-            <Text>{props.name}</Text>
             <VictoryChart>
             <VictoryAxis
             tickValues={week_indices}

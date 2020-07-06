@@ -1,16 +1,9 @@
-import { combineReducers } from 'redux';
+import {action_types} from './actions';
+
 
 const initialState = {
-    isSignedIn: false,
-    authToken: null,
     currActType: null,
-    monthChartData: [],
-    chartData: {
-        hasData: false,
-        data: {}
-    },
     actTypes: {},
-    currTypeIdx: -1,
 };
 
 /*
@@ -102,6 +95,10 @@ function rootReducer(state = initialState, action) {
             return Object.assign({}, state, {
                 chartData: chartData(state.chartData, action)
             });
+        case action_types.set_act_tree:
+            return Object.assign({}, state, {
+                actTypes: action.act_tree
+            })
         default:
             return state;
     }
