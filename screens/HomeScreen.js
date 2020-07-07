@@ -4,20 +4,21 @@ import * as native from 'react-native';
 import { connect } from 'react-redux';
 import * as actions from '../redux/actions';
 import { mapStateToProps } from '../redux/react_funcs';
-import { check_fetch } from '../utils/utils';
 import { SwipeListView } from 'react-native-swipe-list-view';
 
 
 function HomeScreen(props) {
     const [newType, setNewType] = useState('');
-    const [types, setTypes] = useState();
+    const [types, setTypes] = useState([]);
 
     useEffect(() => {
         var next_types = [];
-        Object.keys(props.actTypes).forEach((type_name) => {
-            next_types.push(type_name);
-        });
+        if (props.actTypes != undefined){
+            Object.keys(props.actTypes).forEach((type_name) => {
+                next_types.push(type_name);
+         });
         setTypes(next_types);
+        }
     }, [props.actTypes]);
 
     return (
@@ -69,45 +70,13 @@ function HomeScreen(props) {
         </View>
     );
 }
-
-
 export default connect(mapStateToProps, null)(HomeScreen);
 
-function DevelopmentModeNotice() {
-    if (__DEV__) {
-        return (
-            <Text style={styles.developmentModeText}>
-                Development mode is enabled: your app will be slower but you can use useful development
-                tools.
-            </Text>
-        );
-    } else {
-        return (
-            <Text style={styles.developmentModeText}>
-                You are not in development mode: your app will run at full speed.
-            </Text>
-        );
-    }
-}
 
 const styles = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: '#fff',
-    },
-    developmentModeText: {
-        marginBottom: 20,
-        color: 'rgba(0,0,0,0.4)',
-        fontSize: 14,
-        lineHeight: 19,
-        textAlign: 'center',
-    },
-    contentContainer: {
-        paddingTop: 30,
-    },
-    getStartedContainer: {
-        alignItems: 'center',
-        marginHorizontal: 50,
     },
     rowFront: {
         alignItems: 'center',
