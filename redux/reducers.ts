@@ -81,9 +81,9 @@ function manageActs(state = initialState.actTypes, action: manage_act_types_acti
             new_act_types[action.new_name] = edited_act_type;
             return new_act_types;
         case action_types.delete_act_type:
-            var act_name = action.name;
-            
-            return;
+            var curr_tree: act_type_dict = Object.assign({}, state);
+            delete curr_tree[action.name];
+            return curr_tree;
         case 'update_act':
         case 'delete_act':
             var acts_of_type = {};

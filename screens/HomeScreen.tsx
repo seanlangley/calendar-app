@@ -24,10 +24,12 @@ function HomeScreen(props: any) {
     return (
         <View style={styles.container}>
             <native.TextInput
+                style={styles.textBox}
                 placeholder="New Acvitity Name"
                 value={newType}
                 onChangeText={setNewType}
             />
+            <View style={styles.enterActivityContainer}>
             <Button
                 title={"Submit New Activity"}
                 onPress={() => {
@@ -36,10 +38,12 @@ function HomeScreen(props: any) {
                     }
                 }}
             />
+            </View>
+            <View style={styles.listContainer}>
             <SwipeListView
                 data={types}
                 keyExtractor={(item: string) => item}
-                rightOpenValue={-150}
+                rightOpenValue={-75}
                 disableRightSwipe={true}
                 renderItem={({ item }) =>
                     <View style={styles.rowFront}>
@@ -61,14 +65,9 @@ function HomeScreen(props: any) {
                                 props.navigation.navigate('EditScreen');
                             }}
                         />
-                        <Button
-                            title={'Delete'}
-                            onPress={() => {
-                            }}
-                        />
                     </View>
                 )}
-            />
+            /></View>
         </View>
     );
 }
@@ -81,14 +80,17 @@ const styles = StyleSheet.create({
         backgroundColor: '#fff',
     },
     rowFront: {
+        marginVertical: 8,
         alignItems: 'center',
         backgroundColor: 'white',
-        borderBottomColor: 'white',
-        borderBottomWidth: 1,
+        borderColor: 'black',
+        borderWidth: 1,
         justifyContent: 'center',
         height: 50,
     },
     rowBack: {
+        marginVertical: 8,
+        height: 50,
         alignItems: 'center',
         backgroundColor: '#DDD',
         flex: 1,
@@ -97,4 +99,16 @@ const styles = StyleSheet.create({
         paddingLeft: 15,
         paddingRight: 5
     },
+    textBox: {
+        height: 40,
+        borderColor: 'gray',
+        borderWidth: 1,
+    },
+    enterActivityContainer: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+    },
+    listContainer: {
+        paddingTop: 10,
+    }
 });

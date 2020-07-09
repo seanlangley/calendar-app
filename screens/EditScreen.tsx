@@ -13,11 +13,13 @@ function EditScreen(props: any) {
     return (
         <native.View>
             <native.TextInput
-                placeholder="Units to use"
+                style={styles.textBox}
+                placeholder="Units"
                 value={units}
                 onChangeText={setUnits}
             />
             <native.TextInput
+                style={styles.textBox}
                 placeholder="New Name"
                 value={name}
                 onChangeText={setName}
@@ -25,7 +27,7 @@ function EditScreen(props: any) {
             <native.Button
                 title={"Submit"}
                 onPress={() => {
-                    if (name != "") {
+                    if (name != "" || units != "") {
                         props.dispatch(actions.editActType(name, props.currActType, units));
                         props.dispatch(actions.setActType(name));
                         props.navigation.goBack();
@@ -40,9 +42,10 @@ function EditScreen(props: any) {
 
                 }}
             />
-            <native.Text>{deleteText}</native.Text>
+            <native.Text style={styles.delete_text}>{deleteText}</native.Text>
             <native.Button
                 title={yesText}
+                color={'red'}
                 onPress={() => {
                     props.dispatch(actions.deleteActType(props.currActType))
                     props.navigation.goBack();
@@ -55,3 +58,16 @@ function EditScreen(props: any) {
 }
 
 export default connect(mapStateToProps, null)(EditScreen);
+
+const styles = native.StyleSheet.create({
+    delete_text: {
+        color: 'red',
+        fontWeight: 'bold',
+    },
+    textBox: {
+        marginVertical: 4,
+        height: 40,
+        borderColor: 'gray',
+        borderWidth: 1,
+    },
+})
