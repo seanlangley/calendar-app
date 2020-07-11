@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Button, StyleSheet, Text, View, ActivityIndicator } from 'react-native';
 import * as native from 'react-native';
 import { ScrollView } from 'react-native-gesture-handler';
-import { Calendar } from 'react-native-calendars';
+import { Calendar, Agenda } from 'react-native-calendars';
 import { connect } from 'react-redux';
 import { mapStateToProps } from '../redux/react_funcs';
 import * as actions from '../redux/actions';
@@ -28,6 +28,7 @@ function LinksScreen(props: any) {
     const [isLoading, setLoading] = useState(true);
     const [markedDates, setMarkedDates] = useState<marked_day_dict>({});
     const [number, setNumber] = useState("");
+    const [enterMeta, setEnterMeta] = useState(false);
 
     useEffect(() => {
         if (isLoading) {
@@ -37,21 +38,22 @@ function LinksScreen(props: any) {
     }, []);
 
     return (
-        <ScrollView style={styles.container} contentContainerStyle={styles.contentContainer}>
+        <View style={{ flex: 1 }}>
             {isLoading ? <ActivityIndicator /> : (
-                <Calendar
-                    markedDates={markedDates}
-                    markingType={'period'}
-                    onDayPress={handle_pressed_day}
-                />
+                <ScrollView style={styles.container} contentContainerStyle={styles.contentContainer}>
+                    {enterMeta ? <Text>{"enter meta"}</Text> : (
+                        <Text>{"don't enter meta"}</Text>
+                    )}
+                    {isLoading ? <ActivityIndicator /> : (
+                        <Calendar
+                            markedDates={markedDates}
+                            markingType={'period'}
+                            onDayPress={handle_pressed_day}
+                        />
+                    )}
+                </ScrollView>
             )}
-            <native.TextInput
-                placeholder="Number of pages read"
-                value={number}
-                onChangeText={setNumber}
-                keyboardType={"numeric"}
-            />
-        </ScrollView>
+        </View>
     );
 
     interface pressed_day {
