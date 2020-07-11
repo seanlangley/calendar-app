@@ -13,20 +13,16 @@ var daysToPost = {}
 
 interface marked_day {
     color: string;
-    startingDay: string;
-    endingDay: string;
+    startingDay: boolean;
+    endingDay: boolean;
 }
 interface marked_day_dict {
     [day: string]: marked_day;
 }
 
-interface act_type_dict {
-    [act_type: string]: marked_day_dict;
-}
-
 function LinksScreen(props: any) {
     const [isLoading, setLoading] = useState(true);
-    const [markedDates, setMarkedDates] = useState({});
+    const [markedDates, setMarkedDates] = useState<marked_day_dict>({});
     const [number, setNumber] = useState("");
 
     useEffect(() => {
@@ -147,9 +143,8 @@ function LinksScreen(props: any) {
     }
 
     function initialize_marked_days(data) {
-        var marked_dates = {};
+        var marked_dates: marked_day_dict = {};
         var activity_types = {};
-        marked_dates[data.name] = {};
         daysToPost[data.name] = {};
         activeDays[data.name] = {};
 
@@ -163,13 +158,13 @@ function LinksScreen(props: any) {
 
         Object.keys(data.acts).forEach((day) => {
             var curr_ms = new Date(day).getTime();
-            marked_dates[props.currActType][day] = {
+            marked_dates[day] = {
                 'color': data.acts[day].was_done ? 'green' : 'red',
                 'startingDay': is_start_day(curr_ms, props.currActType),
                 'endingDay': is_end_day(curr_ms, props.currActType),
             };
         });
-        setMarkedDates(marked_dates[props.currActType]);
+        setMarkedDates(marked_dates);
     }
 
 }
