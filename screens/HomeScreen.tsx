@@ -13,11 +13,11 @@ function HomeScreen(props: any) {
 
     useEffect(() => {
         var next_types: string[] = [];
-        if (props.actTypes != undefined){
+        if (props.actTypes != undefined) {
             Object.keys(props.actTypes).forEach((type_name) => {
                 next_types.push(type_name);
-         });
-        setTypes(next_types);
+            });
+            setTypes(next_types);
         }
     }, [props.actTypes]);
 
@@ -30,44 +30,44 @@ function HomeScreen(props: any) {
                 onChangeText={setNewType}
             />
             <View style={styles.enterActivityContainer}>
-            <Button
-                title={"Submit New Activity"}
-                onPress={() => {
-                    if (types.indexOf(newType) == -1 && newType.length > 0) {
-                        props.dispatch(actions.addActType(newType));
-                    }
-                }}
-            />
+                <Button
+                    title={"Submit New Activity"}
+                    onPress={() => {
+                        if (types.indexOf(newType) == -1 && newType.length > 0) {
+                            props.dispatch(actions.addActType(newType));
+                        }
+                    }}
+                />
             </View>
             <View style={styles.listContainer}>
-            <SwipeListView
-                data={types}
-                keyExtractor={(item: string) => item}
-                rightOpenValue={-75}
-                disableRightSwipe={true}
-                renderItem={({ item }) =>
-                    <View style={styles.rowFront}>
-                        <Button
-                            title={item}
-                            onPress={() => {
-                                props.dispatch(actions.setActType(item));
-                                props.navigation.navigate('TypeDetail');
-                            }}
-                        />
-                    </View>
-                }
-                renderHiddenItem={(data, rowMap) => (
-                    <View style={styles.rowBack}>
-                        <Button
-                            title={'Edit'}
-                            onPress={() => {
-                                props.dispatch(actions.setActType(data.item));
-                                props.navigation.navigate('EditScreen');
-                            }}
-                        />
-                    </View>
-                )}
-            /></View>
+                <SwipeListView
+                    data={types}
+                    keyExtractor={(item: string) => item}
+                    rightOpenValue={-75}
+                    disableRightSwipe={true}
+                    renderItem={({ item }) =>
+                        <View style={styles.rowFront}>
+                            <Button
+                                title={item}
+                                onPress={() => {
+                                    props.dispatch(actions.setActType(item));
+                                    props.navigation.navigate('TypeDetail');
+                                }}
+                            />
+                        </View>
+                    }
+                    renderHiddenItem={(data, rowMap) => (
+                        <View style={styles.rowBack}>
+                            <Button
+                                title={'Edit'}
+                                onPress={() => {
+                                    props.dispatch(actions.setActType(data.item));
+                                    props.navigation.navigate('EditScreen');
+                                }}
+                            />
+                        </View>
+                    )}
+                /></View>
         </View>
     );
 }
@@ -87,8 +87,10 @@ const styles = StyleSheet.create({
         borderWidth: 1,
         justifyContent: 'center',
         height: 50,
+        borderRadius: 50,
     },
     rowBack: {
+        borderRadius: 50,
         marginVertical: 8,
         height: 50,
         alignItems: 'center',
@@ -97,7 +99,7 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         justifyContent: 'flex-end',
         paddingLeft: 15,
-        paddingRight: 5
+        paddingRight: 5,
     },
     textBox: {
         height: 40,
@@ -110,5 +112,6 @@ const styles = StyleSheet.create({
     },
     listContainer: {
         paddingTop: 10,
+        flex: 1
     }
 });
