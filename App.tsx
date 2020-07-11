@@ -45,7 +45,7 @@ const storeData = async (value: ActTree) => {
 const getData = async () => {
     try {
         const jsonValue = await AsyncStorage.getItem('@act_tree');
-        console.log('data read from file');
+    console.log('data read from file');
         return jsonValue != null ? JSON.parse(jsonValue) : null;
     } catch (e) {
         console.error(e);
