@@ -120,29 +120,29 @@ function LinksScreen(props: any) {
         }));
 
     }
-    function is_day_active(day_in_ms, act_name) {
+    function is_day_active(day_in_ms: number, act_name: string): boolean {
         if (!(day_in_ms in activeDays[act_name])) {
             activeDays[act_name][day_in_ms] = false;
         }
         return activeDays[act_name][day_in_ms];
     }
-    function set_is_day_active(value, day_in_ms, act_name) {
+    function set_is_day_active(value, day_in_ms, act_name): void {
         activeDays[act_name][day_in_ms] = value;
     }
 
-    function is_start_day(day_ms, act_name) {
+    function is_start_day(day_ms, act_name): boolean {
         //A day is a start day if the prev day is not active
         var prev = Math.round(day_ms - msPerDay);
         return !is_day_active(prev, act_name);
     }
 
-    function is_end_day(day_ms, act_name) {
+    function is_end_day(day_ms, act_name): boolean {
         //A day is an end day if the next day is not active
         var next = Math.round(day_ms + msPerDay);
         return !is_day_active(next, act_name);
     }
 
-    function initialize_marked_days(data) {
+    function initialize_marked_days(data): void {
         var marked_dates: marked_day_dict = {};
         var activity_types = {};
         daysToPost[data.name] = {};
