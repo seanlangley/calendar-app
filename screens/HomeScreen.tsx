@@ -6,6 +6,7 @@ import * as actions from '../redux/actions';
 import { mapStateToProps } from '../redux/react_funcs';
 import { SwipeListView } from 'react-native-swipe-list-view';
 
+var styles_g = require('../constants/styles');
 
 function HomeScreen(props: any) {
     const [newType, setNewType] = useState('');
@@ -29,7 +30,7 @@ function HomeScreen(props: any) {
                 value={newType}
                 onChangeText={setNewType}
             />
-            <View style={styles.enterActivityContainer}>
+            <View style={styles_g.leftAlign}>
                 <Button
                     title={"Submit New Activity"}
                     onPress={() => {
@@ -105,10 +106,6 @@ const styles = StyleSheet.create({
         height: 40,
         borderColor: 'gray',
         borderWidth: 1,
-    },
-    enterActivityContainer: {
-        flexDirection: 'row',
-        justifyContent: 'space-between',
     },
     listContainer: {
         paddingTop: 10,
