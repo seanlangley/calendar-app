@@ -14,6 +14,88 @@ function LinksScreen(props) {
     const [isLoading, setLoading] = useState(true);
     const [markedDates, setMarkedDates] = useState({});
 
+    useEffect(() => {
+        if (isLoading) {
+            initialize_marked_days(props.actTypes[props.currActType]);
+            setLoading(false);
+        }
+    }, []);
+
+    return (
+        <ScrollView style={styles.container} contentContainerStyle={styles.contentContainer}>
+            {isLoading ? <ActivityIndicator /> : (
+                <Calendar
+                    markedDates={markedDates[props.currActType]}
+                    markingType={'period'}
+                    onDayPress={handle_pressed_day}
+                />
+            )}
+        </ScrollView>
+    );
+
+    function handle_pressed_day(pressed_day) {
+        let currActType = props.currActType;
+        var marked_dates = JSON.parse(JSON.stringify(markedDates));
+        var curr_day_info = marked_dates[currActType][pressed_day.dateString]
+        var curr_color = curr_day_info == undefined ? 'white' : curr_day_info.color;
+        var next_color;
+        var pressed_day_obj = new Date(pressed_day.dateString);
+        var pressed_day_ms = pressed_day_obj.getTime();
+        var prev_day_ms = Math.round(pressed_day_ms - msPerDay);
+        var next_day_ms = Math.round(pressed_day_ms + msPerDay);
+        var prev_day_isostr = new Date(prev_day_ms).toISOString().slice(0, 10);
+        var next_day_isostr = new Date(next_day_ms).toISOString().slice(0, 10);
+        var should_be_active;
+        var prev_day_state;
+        var next_day_state;
+        var post_action;
+
+        if (curr_color == 'white') {
+            next_color = 'green';
+            should_be_active = true;
+            prev_day_state = false;
+            next_day_state = false;
+            post_action = "was_done";
+
+        }
+        else if (curr_color == 'green') {
+            next_color = 'red';
+            should_be_active = true;
+            post_action = "not_done";
+        }
+        else if (curr_color == 'red') {
+            next_color = 'white';
+            should_be_active = false;
+            prev_day_state = true;
+            next_day_state = true;
+            post_action = "delete";
+        }
+        else {
+            console.error('Unhandled color');
+        }
+        daysToPost[currActType][pressed_day.dateString] = post_action;
+
+        if (is_day_active(prev_day_ms, currActType) && prev_day_state != undefined) {
+            marked_dates[currActType][prev_day_isostr]['endingDay'] = prev_day_state;
+        }
+        if (is_day_active(next_day_ms, currActType) && next_day_state != undefined) {
+            marked_dates[currActType][next_day_isostr]['startingDay'] = next_day_state;;
+        }
+        set_is_day_active(should_be_active, pressed_day_ms, currActType);
+        marked_dates[currActType][pressed_day.dateString] = {
+            'color': next_color,
+            'startingDay': is_start_day(pressed_day_ms, currActType),
+            'endingDay': is_end_day(pressed_day_ms, currActType),
+        };
+        setMarkedDates(marked_dates);
+
+        props.dispatch(actions.postAct({
+            day: pressed_day.dateString,
+            action: post_action,
+            name: props.currActType
+        }));
+
+    }
     function is_day_active(day_in_ms, act_name) {
         if (!(day_in_ms in activeDays[act_name])) {
             activeDays[act_name][day_in_ms] = false;
@@ -36,7 +118,7 @@ function LinksScreen(props) {
         return !is_day_active(next, act_name);
     }
 
-    function initialize_data(data) {
+    function initialize_marked_days(data) {
         var marked_dates = {};
         var activity_types = {};
         marked_dates[data.name] = {};
@@ -62,86 +144,8 @@ function LinksScreen(props) {
         setMarkedDates(marked_dates);
     }
 
-    useEffect(() => {
-        if (isLoading) {
-            initialize_data(props.actTypes[props.currActType]);
-            setLoading(false);
-        }
-    }, []);
-
-    return (
-        <ScrollView style={styles.container} contentContainerStyle={styles.contentContainer}>
-            {isLoading ? <ActivityIndicator /> : (
-                <Calendar
-                    markedDates={markedDates[props.currActType]}
-                    markingType={'period'}
-                    onDayPress={(pressed_day) => {
-                        let currActType = props.currActType;
-                        var marked_dates = JSON.parse(JSON.stringify(markedDates));
-                        var curr_day_info = marked_dates[currActType][pressed_day.dateString]
-                        var curr_color = curr_day_info == undefined ? 'white' : curr_day_info.color;
-                        var next_color;
-                        var pressed_day_obj = new Date(pressed_day.dateString);
-                        var pressed_day_ms = pressed_day_obj.getTime();
-                        var prev_day_ms = Math.round(pressed_day_ms - msPerDay);
-                        var next_day_ms = Math.round(pressed_day_ms + msPerDay);
-                        var prev_day_isostr = new Date(prev_day_ms).toISOString().slice(0, 10);
-                        var next_day_isostr = new Date(next_day_ms).toISOString().slice(0, 10);
-                        var should_be_active;
-                        var prev_day_state;
-                        var next_day_state;
-                        var post_action;
-
-                        if (curr_color == 'white') {
-                            next_color = 'green';
-                            should_be_active = true;
-                            prev_day_state = false;
-                            next_day_state = false;
-                            post_action = "was_done";
-
-                        }
-                        else if (curr_color == 'green') {
-                            next_color = 'red';
-                            should_be_active = true;
-                            post_action = "not_done";
-                        }
-                        else if (curr_color == 'red') {
-                            next_color = 'white';
-                            should_be_active = false;
-                            prev_day_state = true;
-                            next_day_state = true;
-                            post_action = "delete";
-                        }
-                        else {
-                            console.error('Unhandled color');
-                        }
-                        daysToPost[currActType][pressed_day.dateString] = post_action;
-
-                        if (is_day_active(prev_day_ms, currActType) && prev_day_state != undefined) {
-                            marked_dates[currActType][prev_day_isostr]['endingDay'] = prev_day_state;
-                        }
-                        if (is_day_active(next_day_ms, currActType) && next_day_state != undefined) {
-                            marked_dates[currActType][next_day_isostr]['startingDay'] = next_day_state;;
-                        }
-                        set_is_day_active(should_be_active, pressed_day_ms, currActType);
-                        marked_dates[currActType][pressed_day.dateString] = {
-                            'color': next_color,
-                            'startingDay': is_start_day(pressed_day_ms, currActType),
-                            'endingDay': is_end_day(pressed_day_ms, currActType),
-                        };
-                        setMarkedDates(marked_dates);
-
-                        props.dispatch(actions.postAct({
-                            day: pressed_day.dateString,
-                            action: post_action,
-                            name: props.currActType
-                        }));
-                    }}
-                />
-            )}
-        </ScrollView>
-    );
 }
+
 
 export default connect(mapStateToProps, null)(LinksScreen);
 
