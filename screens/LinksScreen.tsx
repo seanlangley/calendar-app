@@ -7,6 +7,8 @@ import { connect } from 'react-redux';
 import { mapStateToProps } from '../redux/react_funcs';
 import * as actions from '../redux/actions';
 
+var styles_g = require('../constants/styles');
+
 let msPerDay = 24 * 60 * 60 * 1000;
 
 interface marked_day {
@@ -27,8 +29,11 @@ var activeDays: active_day_dict = {}
 function LinksScreen(props: any) {
     const [isLoading, setLoading] = useState(true);
     const [markedDates, setMarkedDates] = useState<marked_day_dict>({});
-    const [number, setNumber] = useState("");
-    const [enterMeta, setEnterMeta] = useState(false);
+    const [numberDone, setNumberDone] = useState("");
+    const [enterManually, setEnterManually] = useState(false);
+    const [doneText, setDoneText] = useState("Done")
+    const[wasDone, setWasDone] = useState(false);
+    const [daySelected, setDaySelected] = useState("");
 
     useEffect(() => {
         if (isLoading) {
@@ -41,9 +46,6 @@ function LinksScreen(props: any) {
         <View style={{ flex: 1 }}>
             {isLoading ? <ActivityIndicator /> : (
                 <ScrollView style={styles.container} contentContainerStyle={styles.contentContainer}>
-                    {enterMeta ? <Text>{"enter meta"}</Text> : (
-                        <Text>{"don't enter meta"}</Text>
-                    )}
                     {isLoading ? <ActivityIndicator /> : (
                         <Calendar
                             markedDates={markedDates}
@@ -51,6 +53,44 @@ function LinksScreen(props: any) {
                             onDayPress={handle_pressed_day}
                         />
                     )}
+                    <native.Switch
+                        trackColor={{ false: "white", true: "#81b0ff" }}
+                        thumbColor={enterManually ? "blue" : "white"}
+                        ios_backgroundColor="#3e3e3e"
+                        onValueChange={() => setEnterManually(!enterManually)}
+                        value={enterManually}
+                    />
+                    <Text>{enterManually ? "Entering Manually" : "Entering automatically"}</Text>
+                    {enterManually ? (
+                        <View>
+                            <native.TextInput
+                                style={styles_g.textBox}
+                                placeholder={"Number done"}
+                                value={numberDone}
+                                onChangeText={setNumberDone}
+                            />
+                            <Text>{doneText}</Text>
+                            <native.Switch
+                                trackColor={{ false: "white", true: "#81b0ff" }}
+                                thumbColor={enterManually ? "blue" : "white"}
+                                ios_backgroundColor="#3e3e3e"
+                                onValueChange={() => {
+                                    setDoneText(doneText == 'Done' ? 'Not Done' : 'Done')
+                                    setWasDone(!wasDone);
+                                }}
+                                value={wasDone}
+                            />
+                            <View 
+                                style={styles_g.leftAlign}>
+                            <Button
+                                title={"Submit"}
+                                onPress={() => console.log("")}
+                            /></View>
+                        </View>
+                    ) : (
+                            <View />
+                        )
+                    }
                 </ScrollView>
             )}
         </View>
