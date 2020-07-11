@@ -8,8 +8,6 @@ import { mapStateToProps } from '../redux/react_funcs';
 import * as actions from '../redux/actions';
 
 let msPerDay = 24 * 60 * 60 * 1000;
-var activeDays = {}
-var daysToPost = {}
 
 interface marked_day {
     color: string;
@@ -19,6 +17,12 @@ interface marked_day {
 interface marked_day_dict {
     [day: string]: marked_day;
 }
+
+interface active_day_dict {
+    [day_in_ms: number]: boolean;
+}
+
+var activeDays: active_day_dict = {}
 
 function LinksScreen(props: any) {
     const [isLoading, setLoading] = useState(true);
@@ -58,7 +62,6 @@ function LinksScreen(props: any) {
         dateString: string;
     }
     function handle_pressed_day(pressed_day: pressed_day) {
-        let currActType = props.currActType;
         var marked_dates = JSON.parse(JSON.stringify(markedDates));
         var curr_day_info = marked_dates[pressed_day.dateString]
         var curr_color = curr_day_info == undefined ? 'white' : curr_day_info.color;
@@ -69,7 +72,7 @@ function LinksScreen(props: any) {
         var next_day_ms = Math.round(pressed_day_ms + msPerDay);
         var prev_day_isostr = new Date(prev_day_ms).toISOString().slice(0, 10);
         var next_day_isostr = new Date(next_day_ms).toISOString().slice(0, 10);
-        var should_be_active;
+        var should_be_active: boolean = false;
         var prev_day_state;
         var next_day_state;
         var post_action;
@@ -97,19 +100,18 @@ function LinksScreen(props: any) {
         else {
             console.error('Unhandled color');
         }
-        daysToPost[currActType][pressed_day.dateString] = post_action;
 
-        if (is_day_active(prev_day_ms, currActType) && prev_day_state != undefined) {
+        if (is_day_active(prev_day_ms) && prev_day_state != undefined) {
             marked_dates[prev_day_isostr]['endingDay'] = prev_day_state;
         }
-        if (is_day_active(next_day_ms, currActType) && next_day_state != undefined) {
+        if (is_day_active(next_day_ms) && next_day_state != undefined) {
             marked_dates[next_day_isostr]['startingDay'] = next_day_state;;
         }
-        set_is_day_active(should_be_active, pressed_day_ms, currActType);
+        set_is_day_active(should_be_active, pressed_day_ms);
         marked_dates[pressed_day.dateString] = {
             'color': next_color,
-            'startingDay': is_start_day(pressed_day_ms, currActType),
-            'endingDay': is_end_day(pressed_day_ms, currActType),
+            'startingDay': is_start_day(pressed_day_ms),
+            'endingDay': is_end_day(pressed_day_ms),
         };
         setMarkedDates(marked_dates);
 
@@ -120,48 +122,41 @@ function LinksScreen(props: any) {
         }));
 
     }
-    function is_day_active(day_in_ms: number, act_name: string): boolean {
-        if (!(day_in_ms in activeDays[act_name])) {
-            activeDays[act_name][day_in_ms] = false;
+    function is_day_active(day_in_ms: number): boolean {
+        if (!(day_in_ms in activeDays)) {
+            activeDays[day_in_ms] = false;
         }
-        return activeDays[act_name][day_in_ms];
+        return activeDays[day_in_ms];
     }
-    function set_is_day_active(value, day_in_ms, act_name): void {
-        activeDays[act_name][day_in_ms] = value;
+    function set_is_day_active(value: boolean, day_in_ms: number): void {
+        activeDays[day_in_ms] = value;
     }
 
-    function is_start_day(day_ms, act_name): boolean {
+    function is_start_day(day_ms: number): boolean {
         //A day is a start day if the prev day is not active
         var prev = Math.round(day_ms - msPerDay);
-        return !is_day_active(prev, act_name);
+        return !is_day_active(prev);
     }
 
-    function is_end_day(day_ms, act_name): boolean {
+    function is_end_day(day_ms: number): boolean {
         //A day is an end day if the next day is not active
         var next = Math.round(day_ms + msPerDay);
-        return !is_day_active(next, act_name);
+        return !is_day_active(next);
     }
 
-    function initialize_marked_days(data): void {
+    function initialize_marked_days(data: any): void {
         var marked_dates: marked_day_dict = {};
-        var activity_types = {};
-        daysToPost[data.name] = {};
-        activeDays[data.name] = {};
 
         Object.keys(data.acts).forEach(day => {
-            if (!(data.name in activity_types)) {
-                activity_types[data.name] = [];
-            }
-            activity_types[data.name].push(data.acts[day]);
-            activeDays[data.name][new Date(day).getTime()] = true;
+            activeDays[new Date(day).getTime()] = true;
         });
 
         Object.keys(data.acts).forEach((day) => {
             var curr_ms = new Date(day).getTime();
             marked_dates[day] = {
                 'color': data.acts[day].was_done ? 'green' : 'red',
-                'startingDay': is_start_day(curr_ms, props.currActType),
-                'endingDay': is_end_day(curr_ms, props.currActType),
+                'startingDay': is_start_day(curr_ms),
+                'endingDay': is_end_day(curr_ms),
             };
         });
         setMarkedDates(marked_dates);
