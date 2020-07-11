@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Button, StyleSheet, Text, View, ActivityIndicator } from 'react-native';
+import * as native from 'react-native';
 import { ScrollView } from 'react-native-gesture-handler';
 import { Calendar } from 'react-native-calendars';
 import { connect } from 'react-redux';
@@ -10,9 +11,23 @@ let msPerDay = 24 * 60 * 60 * 1000;
 var activeDays = {}
 var daysToPost = {}
 
-function LinksScreen(props) {
+interface marked_day {
+    color: string;
+    startingDay: string;
+    endingDay: string;
+}
+interface marked_day_dict {
+    [day: string]: marked_day;
+}
+
+interface act_type_dict {
+    [act_type: string]: marked_day_dict;
+}
+
+function LinksScreen(props: any) {
     const [isLoading, setLoading] = useState(true);
     const [markedDates, setMarkedDates] = useState({});
+    const [number, setNumber] = useState("");
 
     useEffect(() => {
         if (isLoading) {
@@ -25,18 +40,31 @@ function LinksScreen(props) {
         <ScrollView style={styles.container} contentContainerStyle={styles.contentContainer}>
             {isLoading ? <ActivityIndicator /> : (
                 <Calendar
-                    markedDates={markedDates[props.currActType]}
+                    markedDates={markedDates}
                     markingType={'period'}
                     onDayPress={handle_pressed_day}
                 />
             )}
+            <native.TextInput
+                placeholder="Number of pages read"
+                value={number}
+                onChangeText={setNumber}
+                keyboardType={"numeric"}
+            />
         </ScrollView>
     );
 
-    function handle_pressed_day(pressed_day) {
+    interface pressed_day {
+        year: number;
+        month: number;
+        day: number;
+        timestamp: number;
+        dateString: string;
+    }
+    function handle_pressed_day(pressed_day: pressed_day) {
         let currActType = props.currActType;
         var marked_dates = JSON.parse(JSON.stringify(markedDates));
-        var curr_day_info = marked_dates[currActType][pressed_day.dateString]
+        var curr_day_info = marked_dates[pressed_day.dateString]
         var curr_color = curr_day_info == undefined ? 'white' : curr_day_info.color;
         var next_color;
         var pressed_day_obj = new Date(pressed_day.dateString);
@@ -76,13 +104,13 @@ function LinksScreen(props) {
         daysToPost[currActType][pressed_day.dateString] = post_action;
 
         if (is_day_active(prev_day_ms, currActType) && prev_day_state != undefined) {
-            marked_dates[currActType][prev_day_isostr]['endingDay'] = prev_day_state;
+            marked_dates[prev_day_isostr]['endingDay'] = prev_day_state;
         }
         if (is_day_active(next_day_ms, currActType) && next_day_state != undefined) {
-            marked_dates[currActType][next_day_isostr]['startingDay'] = next_day_state;;
+            marked_dates[next_day_isostr]['startingDay'] = next_day_state;;
         }
         set_is_day_active(should_be_active, pressed_day_ms, currActType);
-        marked_dates[currActType][pressed_day.dateString] = {
+        marked_dates[pressed_day.dateString] = {
             'color': next_color,
             'startingDay': is_start_day(pressed_day_ms, currActType),
             'endingDay': is_end_day(pressed_day_ms, currActType),
@@ -141,7 +169,7 @@ function LinksScreen(props) {
                 'endingDay': is_end_day(curr_ms, props.currActType),
             };
         });
-        setMarkedDates(marked_dates);
+        setMarkedDates(marked_dates[props.currActType]);
     }
 
 }
