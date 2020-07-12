@@ -31,7 +31,7 @@ interface pressed_day {
     dateString: string;
 }
 
-var activeDays: active_day_dict = {}
+var activeDays: active_day_dict = {};
 
 function LinksScreen(props: any) {
     const [isLoading, setLoading] = useState(true);
@@ -43,6 +43,7 @@ function LinksScreen(props: any) {
 
     useEffect(() => {
         if (isLoading) {
+            activeDays = {};
             initialize_marked_days(props.actTypes[props.currActType]);
             setLoading(false);
         }
