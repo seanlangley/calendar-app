@@ -106,12 +106,12 @@ function LinksScreen(props: any) {
         </View>
     );
 
-    function handle_manual_update(selectedDay: string, action: string, was_done?: boolean){
+    function handle_manual_update(selectedDay: string, action: string, was_done?: boolean) {
         var redux_action;
-        if (action != 'delete' && was_done == undefined){
+        if (action != 'delete' && was_done == undefined) {
             console.error('invalid configuration');
         }
-        if (action == 'delete'){
+        if (action == 'delete') {
             update_calendar(selectedDay, 'delete');
             redux_action = 'delete';
         }
@@ -126,25 +126,26 @@ function LinksScreen(props: any) {
         }));
     }
 
-    function update_calendar(selectedDay: string, action: string, was_done?: boolean){
+    function update_calendar(selectedDay: string, action: string, was_done?: boolean) {
         var marked_dates = JSON.parse(JSON.stringify(markedDates));
         var pressed_day = new Date(selectedDay);
         var prev_day = new Date(Math.round(pressed_day.getTime() - msPerDay));
         var next_day = new Date(Math.round(pressed_day.getTime() + msPerDay));
         let next_color;
+        function getISOString(day: Date) {
+            return day.toISOString().slice(0, 10);
+        }
+
         if (action == 'delete') {
             next_color = 'white';
         }
         else {
             next_color = was_done ? 'green' : 'red';
         }
-        function getISOString(day: Date){
-            return day.toISOString().slice(0, 10);
-        }
-        if (is_day_active(prev_day.getTime())){
+        if (is_day_active(prev_day.getTime())) {
             marked_dates[getISOString(prev_day)]['endingDay'] = action == 'delete' ? true : false;
         }
-        if (is_day_active(next_day.getTime())){
+        if (is_day_active(next_day.getTime())) {
             marked_dates[getISOString(next_day)]['startingDay'] = action == 'delete' ? true : false;
         }
         activeDays[pressed_day.getTime()] = action == 'delete' ? false : true;
