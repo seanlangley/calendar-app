@@ -14,20 +14,23 @@ function ActDetailScreen(props: root_state) {
     const [monthData, set_month_data] = useState<chart_data[]>([]);
     const [weekData, set_week_data] = useState<chart_data[]>([]);
     const [weekNumbers, set_week_numbers] = useState<chart_data[]>([]);
+    const [monthNumbers, set_month_numbers] = useState<chart_data[]>([]);
 
     useEffect(() => {
         let acts = props.actTypes[props.currActType].acts;
-        let month_data = get_month_ratios(acts);
+        let month_data = get_month_data(acts);
         let week_data = get_week_data(acts);
-        set_month_data(month_data);
+        set_month_data(month_data.boolean_ratios);
         set_week_data(week_data.boolean_ratios);
         set_week_numbers(week_data.number_done);
+        set_month_numbers(month_data.number_done);
     }, [props.actTypes[props.currActType].acts]);
     return (
         <native.View>
             <ScrollView>
                 <MonthChart data={monthData} />
                 <WeekChart data={weekData} />
+                <MonthChart data={monthNumbers}/>
                 <WeekChart data={weekNumbers} />
             </ScrollView>
         </native.View>
@@ -36,15 +39,27 @@ function ActDetailScreen(props: root_state) {
 
 export default redux.connect(mapStateToProps, null)(ActDetailScreen);
 
-function get_month_ratios(acts: activity_dict): chart_data[] {
+interface month_data_t {
+    boolean_ratios: chart_data[];
+    number_done: chart_data[];
+}
+
+function get_month_data(acts: activity_dict): month_data_t {
     let monthdays_true = Array(12).fill(0, 0, 12);
     let monthdays_recorded = Array(12).fill(0, 0, 12);
-    let monthdays_ratios: chart_data[] = Array(12).fill(0, 0, 12);
+    let month_numbers: number[] = Array(12).fill(0,0,12);
+    let month_data: month_data_t = {
+        boolean_ratios: Array(12).fill(0,0,12),
+        number_done: Array(12).fill(0,0,12),
+    }
     Object.keys(acts).forEach(day => {
         let act = acts[day];
         let curr_day = moment(day);
         if (act.was_done) {
             monthdays_true[curr_day.month()] += 1;
+        }
+        if (act.was_done && Number.isInteger(act.number_done) && act.number_done != 0) {
+            month_numbers[curr_day.month()] += act.number_done;
         }
         monthdays_recorded[curr_day.month()] += 1;
     });
@@ -53,12 +68,16 @@ function get_month_ratios(acts: activity_dict): chart_data[] {
         if (ratio == Infinity || isNaN(ratio)) {
             ratio = 0;
         }
-        monthdays_ratios[i] = {
+        month_data.boolean_ratios[i] = {
             index: i,
             value: ratio
-        };
+        }
+        month_data.number_done[i] = {
+            index: i,
+            value: month_numbers[i]
+        }
     }
-    return monthdays_ratios;
+    return month_data;
 }
 
 interface week_data_t {
