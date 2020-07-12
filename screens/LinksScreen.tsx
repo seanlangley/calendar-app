@@ -50,61 +50,63 @@ export function LinksScreen(props: any) {
     }, []);
 
     return (
-        <View style={{ flex: 1 }}>
-                <ScrollView style={styles.container} contentContainerStyle={styles.contentContainer}>
-                        <Calendar
-                            markedDates={markedDates}
-                            markingType={'period'}
-                            onDayPress={enterManually ? (pressed_day: pressed_day) => setSelectedDay(pressed_day.dateString) : handle_automatic_update}
-                        />
+        <ScrollView style={styles_g.container} contentContainerStyle={styles.contentContainer}>
+            <Calendar
+                markedDates={markedDates}
+                markingType={'period'}
+                onDayPress={enterManually ? (pressed_day: pressed_day) => setSelectedDay(pressed_day.dateString) : handle_automatic_update}
+            />
+            <native.Switch
+                trackColor={{ false: "white", true: "#81b0ff" }}
+                thumbColor={enterManually ? "blue" : "white"}
+                ios_backgroundColor="#3e3e3e"
+                onValueChange={() => setEnterManually(!enterManually)}
+                value={enterManually}
+            />
+            <Text>{enterManually ? "Entering Manually" : "Entering automatically"}</Text>
+            {enterManually ? (
+                <native.KeyboardAvoidingView
+                    style={styles_g.container}
+                    behavior={native.Platform.OS == "ios" ? "padding" : "height"}
+                    keyboardVerticalOffset={60}
+                >
+                    <Text>{selectedDay}</Text>
+                    <native.TextInput
+                        style={styles_g.textBox}
+                        placeholder={"Number done"}
+                        value={numberDone}
+                        onChangeText={setNumberDone}
+                        keyboardType={"numeric"}
+                    />
+                    <Text>{wasDone ? 'Done' : 'Not Done'}</Text>
                     <native.Switch
                         trackColor={{ false: "white", true: "#81b0ff" }}
                         thumbColor={enterManually ? "blue" : "white"}
                         ios_backgroundColor="#3e3e3e"
-                        onValueChange={() => setEnterManually(!enterManually)}
-                        value={enterManually}
+                        onValueChange={() => {
+                            setWasDone(!wasDone);
+                        }}
+                        value={wasDone}
                     />
-                    <Text>{enterManually ? "Entering Manually" : "Entering automatically"}</Text>
-                    {enterManually ? (
-                        <View>
-                            <Text>{selectedDay}</Text>
-                            <native.TextInput
-                                style={styles_g.textBox}
-                                placeholder={"Number done"}
-                                value={numberDone}
-                                onChangeText={setNumberDone}
-                                keyboardType={"numeric"}
-                            />
-                            <Text>{wasDone ? 'Done' : 'Not Done'}</Text>
-                            <native.Switch
-                                trackColor={{ false: "white", true: "#81b0ff" }}
-                                thumbColor={enterManually ? "blue" : "white"}
-                                ios_backgroundColor="#3e3e3e"
-                                onValueChange={() => {
-                                    setWasDone(!wasDone);
-                                }}
-                                value={wasDone}
-                            />
-                            <View style={styles_g.leftAlign}>
-                                <Button
-                                    title={"Submit"}
-                                    onPress={() => handle_manual_update(selectedDay, wasDone, numberDone)}
-                                />
-                                <Button
-                                    title={"Delete"}
-                                    onPress={() => handle_manual_delete(selectedDay)}
-                                />
-                            </View>
-                        </View>
-                    ) : (
-                            <View />
-                        )
-                    }
-                </ScrollView>
-        </View>
+                    <View style={styles_g.leftAlign}>
+                        <Button
+                            title={"Submit"}
+                            onPress={() => handle_manual_update(selectedDay, wasDone, numberDone)}
+                        />
+                        <Button
+                            title={"Delete"}
+                            onPress={() => handle_manual_delete(selectedDay)}
+                        />
+                    </View>
+                </native.KeyboardAvoidingView>
+            ) : (
+                    <View />
+                )
+            }
+        </ScrollView>
     );
 
-    function handle_manual_delete(selectedDay: string){
+    function handle_manual_delete(selectedDay: string) {
         update_calendar(selectedDay, 'white');
         props.dispatch(actions.postAct({
             day: selectedDay,
@@ -125,7 +127,7 @@ export function LinksScreen(props: any) {
             number_done: numberDone.length == 0 ? "0" : numberDone
         }));
     }
-    
+
     function handle_automatic_update(pressed_day: pressed_day) {
         var marked_dates = JSON.parse(JSON.stringify(markedDates));
         var curr_day_info = marked_dates[pressed_day.dateString]
@@ -144,7 +146,7 @@ export function LinksScreen(props: any) {
             next_color = 'white';
             post_action = "delete";
         }
-        if (post_action == "" || next_color == ""){
+        if (post_action == "" || next_color == "") {
             console.error("Invalid configuration");
         }
         update_calendar(pressed_day.dateString, next_color);
@@ -157,7 +159,7 @@ export function LinksScreen(props: any) {
 
     }
 
-    function update_calendar(selectedDay: string, next_color: string){
+    function update_calendar(selectedDay: string, next_color: string) {
         var marked_dates = JSON.parse(JSON.stringify(markedDates));
         var pressed_day = new Date(selectedDay);
         var prev_day = new Date(Math.round(pressed_day.getTime() - msPerDay));
