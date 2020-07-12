@@ -5,6 +5,7 @@ import { ScrollView } from 'react-native-gesture-handler';
 import { Calendar, Agenda } from 'react-native-calendars';
 import { connect } from 'react-redux';
 import { mapStateToProps } from '../redux/react_funcs';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import * as actions from '../redux/actions';
 
 var styles_g = require('../constants/styles');
@@ -50,7 +51,12 @@ export function LinksScreen(props: any) {
     }, []);
 
     return (
-        <ScrollView style={styles_g.container} contentContainerStyle={styles.contentContainer}>
+        <KeyboardAwareScrollView
+         style={styles_g.container}
+         contentContainerStyle={styles.contentContainer}
+         keyboardOpeningTime={0}
+         extraHeight={10}
+         >
             <Calendar
                 markedDates={markedDates}
                 markingType={'period'}
@@ -60,16 +66,12 @@ export function LinksScreen(props: any) {
                 trackColor={{ false: "white", true: "#81b0ff" }}
                 thumbColor={enterManually ? "blue" : "white"}
                 ios_backgroundColor="#3e3e3e"
-                onValueChange={() => setEnterManually(!enterManually)}
+                onValueChange={() => {setEnterManually(!enterManually);}}
                 value={enterManually}
             />
             <Text>{enterManually ? "Entering Manually" : "Entering automatically"}</Text>
             {enterManually ? (
-                <native.KeyboardAvoidingView
-                    style={styles_g.container}
-                    behavior={native.Platform.OS == "ios" ? "padding" : "height"}
-                    keyboardVerticalOffset={60}
-                >
+                <View>
                     <Text>{selectedDay}</Text>
                     <native.TextInput
                         style={styles_g.textBox}
@@ -98,12 +100,12 @@ export function LinksScreen(props: any) {
                             onPress={() => handle_manual_delete(selectedDay)}
                         />
                     </View>
-                </native.KeyboardAvoidingView>
+                    </View>
             ) : (
                     <View />
                 )
             }
-        </ScrollView>
+        </KeyboardAwareScrollView>
     );
 
     function handle_manual_delete(selectedDay: string) {
