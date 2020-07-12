@@ -32,18 +32,26 @@ export function postAct(post_info: post_info){
         day: string,
         name: string,
         type?: string,
-        was_done?: boolean
+        was_done?: boolean,
+        number_done: number,
     }
     var return_val: return_val = {
         day: post_info.day,
         name: post_info.name,
+        number_done: parseInt(post_info.number_done)
     };
     if (post_info.action == 'delete'){
         return_val.type = 'delete_act';
     }
     else {
         return_val.type = 'update_act';
-        return_val.was_done = post_info.action == 'was_done' ? true : false;
+        if (post_info.action == 'was_done'){
+            return_val.was_done = true;
+        }
+        else{
+            return_val.was_done = false;
+            return_val.number_done = 0;
+        }
     }
     return return_val;
 }

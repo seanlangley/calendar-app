@@ -2,7 +2,8 @@ import {action_types} from './actions';
 
 
 interface activity {
-    'was_done': boolean
+    'was_done': boolean;
+    'number_done': number;
 }
 
 interface activity_dict {
@@ -30,7 +31,7 @@ const initialState: root_state = {
 };
 
 
-function signIn(action) {
+function signIn(action: any) {
     return {
         isSignedIn: true,
         authToken: action.authToken
@@ -41,12 +42,16 @@ interface manage_act_list_action {
     type: string;
     day: string;
     was_done: boolean;
+    number_done: number;
 }
 function manageActList(state: activity_dict = {}, action: manage_act_list_action): activity_dict{
     switch(action.type){
         case 'update_act':
             let new_act: activity_dict = {};
-            new_act[action.day] = {was_done: action.was_done};
+            new_act[action.day] = {
+                was_done: action.was_done,
+                number_done: action.number_done
+            };
             return Object.assign({}, state, new_act);
         case 'delete_act':
             let act_copy: activity_dict = Object.assign({}, state);
