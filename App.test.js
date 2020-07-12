@@ -5,9 +5,12 @@ import { cleanup, fireEvent, render } from 'react-native-testing-library';
 import EditScreen from './screens/EditScreen';
 import HomeScreen from './screens/HomeScreen';
 import LinksScreen from './screens/LinksScreen'
+import ActDetailScreen from './screens/ActDetailScreen';
 import rootReducer from './redux/reducers';
 import { createStore } from 'redux';
 import * as actions from './redux/actions';
+
+jest.useFakeTimers();
 
 const store = createStore(rootReducer);
 beforeEach(() => {
@@ -37,6 +40,12 @@ test('HomeScreen renders correctly',  () => {
 
 test('CalendarScreen renders correctly',  () => {
     const component = make_component(<LinksScreen/>)
+    const tree = renderer.create(component) .toJSON();
+    expect(tree).toMatchSnapshot();
+});
+
+test('ActDetailScreen renders correctly',  () => {
+    const component = make_component(<ActDetailScreen/>)
     const tree = renderer.create(component) .toJSON();
     expect(tree).toMatchSnapshot();
 });
