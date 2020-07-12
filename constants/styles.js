@@ -8,8 +8,8 @@ var {
 
 module.exports = StyleSheet.create({
     leftAlign: {
-        flexDirection: 'row',
-        justifyContent: 'space-between',
+        flexDirection: 'column',
+        alignItems: 'flex-start',
     },
     textBox: {
         height: 40,
