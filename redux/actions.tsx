@@ -25,6 +25,7 @@ interface post_info {
     day: string;
     action: string;
     name: string;
+    number_done: string;
 }
 export function postAct(post_info: post_info){
     interface return_val {

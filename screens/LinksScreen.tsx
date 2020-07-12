@@ -89,11 +89,11 @@ function LinksScreen(props: any) {
                             <View style={styles_g.leftAlign}>
                                 <Button
                                     title={"Submit"}
-                                    onPress={() => handle_manual_update(selectedDay, 'modify', wasDone, numberDone)}
+                                    onPress={() => handle_manual_update(selectedDay, wasDone, numberDone)}
                                 />
                                 <Button
                                     title={"Delete"}
-                                    onPress={() => handle_manual_update(selectedDay, 'delete')}
+                                    onPress={() => handle_manual_delete(selectedDay)}
                                 />
                             </View>
                         </View>
@@ -106,25 +106,25 @@ function LinksScreen(props: any) {
         </View>
     );
 
-    function handle_manual_update(selectedDay: string, action: string, was_done?: boolean, numberDone?: string) {
-        var redux_action;
-        if (action != 'delete' && was_done == undefined) {
-            console.error('invalid configuration');
-        }
-        var next_color;
-        if (action == 'delete'){
-            next_color = 'white';
-            redux_action = 'delete';
-        }
-        else {
-            next_color = was_done ? 'green' : 'red'
-            redux_action = was_done ? 'was_done' : 'not_done';
-        }
+    function handle_manual_delete(selectedDay: string){
+        update_calendar(selectedDay, 'white');
+        props.dispatch(actions.postAct({
+            day: selectedDay,
+            action: 'delete',
+            name: props.currActType,
+            number_done: "0"
+        }))
+    }
+
+    function handle_manual_update(selectedDay: string, was_done: boolean, numberDone: string) {
+        let redux_action = was_done ? 'was_done' : 'not_done';
+        let next_color = was_done ? 'green' : 'red';
         update_calendar(selectedDay, next_color);
         props.dispatch(actions.postAct({
             day: selectedDay,
             action: redux_action,
-            name: props.currActType
+            name: props.currActType,
+            number_done: numberDone.length == 0 ? "0" : numberDone
         }));
     }
     
@@ -153,7 +153,8 @@ function LinksScreen(props: any) {
         props.dispatch(actions.postAct({
             day: pressed_day.dateString,
             action: post_action,
-            name: props.currActType
+            name: props.currActType,
+            number_done: "0",
         }));
 
     }
