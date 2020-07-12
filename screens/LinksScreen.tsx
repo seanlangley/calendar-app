@@ -38,7 +38,7 @@ function LinksScreen(props: any) {
     const [markedDates, setMarkedDates] = useState<marked_day_dict>({});
     const [numberDone, setNumberDone] = useState("");
     const [enterManually, setEnterManually] = useState(false);
-    const[wasDone, setWasDone] = useState(false);
+    const [wasDone, setWasDone] = useState(false);
     const [selectedDay, setSelectedDay] = useState("");
 
     useEffect(() => {
@@ -56,7 +56,7 @@ function LinksScreen(props: any) {
                         <Calendar
                             markedDates={markedDates}
                             markingType={'period'}
-                            onDayPress={enterManually ? (pressed_day: pressed_day) => setSelectedDay(pressed_day.dateString) : handle_pressed_day}
+                            onDayPress={enterManually ? (pressed_day: pressed_day) => setSelectedDay(pressed_day.dateString) : handle_automatic_update}
                         />
                     )}
                     <native.Switch
@@ -89,11 +89,11 @@ function LinksScreen(props: any) {
                             <View style={styles_g.leftAlign}>
                                 <Button
                                     title={"Submit"}
-                                    onPress={() => update_calendar(selectedDay, 'modify', wasDone)}
+                                    onPress={() => handle_manual_update(selectedDay, 'modify', wasDone)}
                                 />
                                 <Button
                                     title={"Delete"}
-                                    onPress={() => update_calendar(selectedDay, 'delete')}
+                                    onPress={() => handle_manual_update(selectedDay, 'delete')}
                                 />
                             </View>
                         </View>
@@ -106,10 +106,27 @@ function LinksScreen(props: any) {
         </View>
     );
 
-    function update_calendar(selectedDay: string, action: string, was_done?: boolean){
+    function handle_manual_update(selectedDay: string, action: string, was_done?: boolean){
+        var redux_action;
         if (action != 'delete' && was_done == undefined){
             console.error('invalid configuration');
         }
+        if (action == 'delete'){
+            update_calendar(selectedDay, 'delete');
+            redux_action = 'delete';
+        }
+        else {
+            update_calendar(selectedDay, 'modify', was_done)
+            redux_action = was_done ? 'was_done' : 'not_done';
+        }
+        props.dispatch(actions.postAct({
+            day: selectedDay,
+            action: redux_action,
+            name: props.currActType
+        }));
+    }
+
+    function update_calendar(selectedDay: string, action: string, was_done?: boolean){
         var marked_dates = JSON.parse(JSON.stringify(markedDates));
         var pressed_day = new Date(selectedDay);
         var prev_day = new Date(Math.round(pressed_day.getTime() - msPerDay));
@@ -140,7 +157,7 @@ function LinksScreen(props: any) {
     }
 
 
-    function handle_pressed_day(pressed_day: pressed_day) {
+    function handle_automatic_update(pressed_day: pressed_day) {
         var marked_dates = JSON.parse(JSON.stringify(markedDates));
         var curr_day_info = marked_dates[pressed_day.dateString]
         var curr_color = curr_day_info == undefined ? 'white' : curr_day_info.color;
@@ -172,9 +189,6 @@ function LinksScreen(props: any) {
             activeDays[day_in_ms] = false;
         }
         return activeDays[day_in_ms];
-    }
-    function set_is_day_active(value: boolean, day_in_ms: number): void {
-        activeDays[day_in_ms] = value;
     }
 
     function is_start_day(day_ms: number): boolean {
