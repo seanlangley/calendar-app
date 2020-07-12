@@ -21,7 +21,12 @@ export function setActType(new_type: string) {
     }
 }
 
-export function postAct(post_info: any){
+interface post_info {
+    day: string;
+    action: string;
+    name: string;
+}
+export function postAct(post_info: post_info){
     interface return_val {
         day: string,
         name: string,

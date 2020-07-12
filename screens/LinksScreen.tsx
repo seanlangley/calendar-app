@@ -132,8 +132,8 @@ function LinksScreen(props: any) {
         var marked_dates = JSON.parse(JSON.stringify(markedDates));
         var curr_day_info = marked_dates[pressed_day.dateString]
         var curr_color = curr_day_info == undefined ? 'white' : curr_day_info.color;
-        var post_action;
-        var next_color: string = curr_color;
+        var post_action = "";
+        var next_color = "";
         if (curr_color == 'white') {
             next_color = 'green';
             post_action = "was_done";
@@ -145,6 +145,9 @@ function LinksScreen(props: any) {
         else if (curr_color == 'red') {
             next_color = 'white';
             post_action = "delete";
+        }
+        if (post_action == "" || next_color == ""){
+            console.error("Invalid configuration");
         }
         update_calendar(pressed_day.dateString, next_color);
         props.dispatch(actions.postAct({

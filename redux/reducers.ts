@@ -65,7 +65,7 @@ interface manage_act_types_action {
     units: string;
 }
 
-function manageActs(state: act_type_dict = initialState.actTypes,
+function manageActTypes(state: act_type_dict = initialState.actTypes,
                     action: manage_act_types_action): act_type_dict {
     switch (action.type) {
         case 'add_act_type':
@@ -122,7 +122,7 @@ function rootReducer(state: root_state = initialState, action: any) {
         case action_types.edit_act_type:
         case action_types.delete_act_type:
             return Object.assign({}, state, {
-                actTypes: manageActs(state.actTypes, action)
+                actTypes: manageActTypes(state.actTypes, action)
             });
         case action_types.set_act_tree:
             return Object.assign({}, state, {
