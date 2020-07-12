@@ -39,16 +39,16 @@ function ActDetailScreen(props: root_state) {
 
 export default redux.connect(mapStateToProps, null)(ActDetailScreen);
 
-interface month_data_t {
+interface act_data_t {
     boolean_ratios: chart_data[];
     number_done: chart_data[];
 }
 
-function get_month_data(acts: activity_dict): month_data_t {
+function get_month_data(acts: activity_dict): act_data_t {
     let monthdays_true = Array(12).fill(0, 0, 12);
     let monthdays_recorded = Array(12).fill(0, 0, 12);
     let month_numbers: number[] = Array(12).fill(0,0,12);
-    let month_data: month_data_t = {
+    let month_data: act_data_t = {
         boolean_ratios: Array(12).fill(0,0,12),
         number_done: Array(12).fill(0,0,12),
     }
@@ -80,16 +80,11 @@ function get_month_data(acts: activity_dict): month_data_t {
     return month_data;
 }
 
-interface week_data_t {
-    boolean_ratios: chart_data[];
-    number_done: chart_data[];
-}
-
-function get_week_data(acts: activity_dict): week_data_t {
+function get_week_data(acts: activity_dict): act_data_t {
     let weekdays_true: number[] = Array(7).fill(0, 0, 7);
     let weekdays_recorded: number[] = Array(7).fill(0, 0, 7);
     let weekday_numbers: number[] = Array(7).fill(0,0,7);
-    let week_data: week_data_t = {
+    let week_data: act_data_t = {
         boolean_ratios: Array(7).fill(0,0,7),
         number_done: Array(7).fill(0,0,7),
     };
