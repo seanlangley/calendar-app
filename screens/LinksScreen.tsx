@@ -38,7 +38,6 @@ function LinksScreen(props: any) {
     const [markedDates, setMarkedDates] = useState<marked_day_dict>({});
     const [numberDone, setNumberDone] = useState("");
     const [enterManually, setEnterManually] = useState(false);
-    const [doneText, setDoneText] = useState("Done")
     const[wasDone, setWasDone] = useState(false);
     const [selectedDay, setSelectedDay] = useState("");
 
@@ -90,11 +89,11 @@ function LinksScreen(props: any) {
                             <View style={styles_g.leftAlign}>
                                 <Button
                                     title={"Submit"}
-                                    onPress={() => changeColor(wasDone, selectedDay)}
+                                    onPress={() => update_calendar(selectedDay, 'modify', wasDone)}
                                 />
                                 <Button
                                     title={"Delete"}
-                                    onPress={() => console.log('delete')}
+                                    onPress={() => update_calendar(selectedDay, 'delete')}
                                 />
                             </View>
                         </View>
@@ -107,83 +106,60 @@ function LinksScreen(props: any) {
         </View>
     );
 
-    function changeColor(was_done: boolean, selectedDay: string){
+    function update_calendar(selectedDay: string, action: string, was_done?: boolean){
+        if (action != 'delete' && was_done == undefined){
+            console.error('invalid configuration');
+        }
         var marked_dates = JSON.parse(JSON.stringify(markedDates));
         var pressed_day = new Date(selectedDay);
         var prev_day = new Date(Math.round(pressed_day.getTime() - msPerDay));
         var next_day = new Date(Math.round(pressed_day.getTime() + msPerDay));
+        let next_color;
+        if (action == 'delete') {
+            next_color = 'white';
+        }
+        else {
+            next_color = was_done ? 'green' : 'red';
+        }
         function getISOString(day: Date){
             return day.toISOString().slice(0, 10);
         }
         if (is_day_active(prev_day.getTime())){
-            marked_dates[getISOString(prev_day)]['endingDay'] = false;
+            marked_dates[getISOString(prev_day)]['endingDay'] = action == 'delete' ? true : false;
         }
         if (is_day_active(next_day.getTime())){
-            marked_dates[getISOString(next_day)]['startingDay'] = false;
+            marked_dates[getISOString(next_day)]['startingDay'] = action == 'delete' ? true : false;
         }
+        activeDays[pressed_day.getTime()] = action == 'delete' ? false : true;
         marked_dates[getISOString(pressed_day)] = {
-            'color': was_done ? 'green' : 'red',
+            'color': next_color,
             'startingDay': is_start_day(pressed_day.getTime()),
             'endingDay': is_end_day(pressed_day.getTime()),
         };
-        activeDays[pressed_day.getTime()] = true;
         setMarkedDates(marked_dates);
     }
+
 
     function handle_pressed_day(pressed_day: pressed_day) {
         var marked_dates = JSON.parse(JSON.stringify(markedDates));
         var curr_day_info = marked_dates[pressed_day.dateString]
         var curr_color = curr_day_info == undefined ? 'white' : curr_day_info.color;
-        var next_color;
-        var pressed_day_obj = new Date(pressed_day.dateString);
-        var pressed_day_ms = pressed_day_obj.getTime();
-        var prev_day_ms = Math.round(pressed_day_ms - msPerDay);
-        var next_day_ms = Math.round(pressed_day_ms + msPerDay);
-        var prev_day_isostr = new Date(prev_day_ms).toISOString().slice(0, 10);
-        var next_day_isostr = new Date(next_day_ms).toISOString().slice(0, 10);
-        var should_be_active: boolean = false;
-        var prev_day_state;
-        var next_day_state;
         var post_action;
-
         if (curr_color == 'white') {
-            next_color = 'green';
-            should_be_active = true;
-            prev_day_state = false;
-            next_day_state = false;
+            update_calendar(pressed_day.dateString, 'modify', true);
             post_action = "was_done";
-
         }
         else if (curr_color == 'green') {
-            next_color = 'red';
-            should_be_active = true;
+            update_calendar(pressed_day.dateString, 'modify', false);
             post_action = "not_done";
         }
         else if (curr_color == 'red') {
-            next_color = 'white';
-            should_be_active = false;
-            prev_day_state = true;
-            next_day_state = true;
+            update_calendar(pressed_day.dateString, 'delete');
             post_action = "delete";
         }
         else {
             console.error('Unhandled color');
         }
-
-        if (is_day_active(prev_day_ms) && prev_day_state != undefined) {
-            marked_dates[prev_day_isostr]['endingDay'] = prev_day_state;
-        }
-        if (is_day_active(next_day_ms) && next_day_state != undefined) {
-            marked_dates[next_day_isostr]['startingDay'] = next_day_state;;
-        }
-        set_is_day_active(should_be_active, pressed_day_ms);
-        marked_dates[pressed_day.dateString] = {
-            'color': next_color,
-            'startingDay': is_start_day(pressed_day_ms),
-            'endingDay': is_end_day(pressed_day_ms),
-        };
-        setMarkedDates(marked_dates);
-
         props.dispatch(actions.postAct({
             day: pressed_day.dateString,
             action: post_action,
