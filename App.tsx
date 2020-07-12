@@ -22,8 +22,7 @@ const loggerMiddleware = createLogger()
 const Stack = createStackNavigator();
 const store = createStore(rootReducer,
     applyMiddleware(
-        thunkMiddleware, // lets us dispatch() functions
-        loggerMiddleware // neat middleware that logs actions
+//        loggerMiddleware // neat middleware that logs actions
     )
 );
 
@@ -45,7 +44,7 @@ const storeData = async (value: ActTree) => {
 const getData = async () => {
     try {
         const jsonValue = await AsyncStorage.getItem('@act_tree');
-    console.log('data read from file');
+        console.log('data read from file');
         return jsonValue != null ? JSON.parse(jsonValue) : null;
     } catch (e) {
         console.error(e);
@@ -60,18 +59,18 @@ export default function App() {
     store.subscribe(() => setCurrType(store.getState().currActType));
     store.subscribe(() => {
         var nextTree = store.getState().actTypes;
-        if (nextTree != prevTree){
+        if (nextTree != prevTree) {
             storeData(nextTree);
             prevTree = nextTree;
         }
     });
 
     useEffect(() => {
-        if(isLoading){
+        if (isLoading) {
             getData()
-            .then((actTree) => store.dispatch(actions.setActTree(actTree)))
-            .catch((e) => console.error(e))
-            .then(() => setLoading(false));
+                .then((actTree) => store.dispatch(actions.setActTree(actTree)))
+                .catch((e) => console.error(e))
+                .then(() => setLoading(false));
         }
     });
 
@@ -89,7 +88,7 @@ export default function App() {
                                 options={{ title: currActType }}
                             />
                             <Stack.Screen name="EditScreen" component={EditScreen}
-                                options={{ title: "Currently editing "+currActType}}
+                                options={{ title: "Currently editing " + currActType }}
                             />
                         </Stack.Navigator>
                     </NavigationContainer>

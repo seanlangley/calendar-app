@@ -7,11 +7,11 @@ interface activity {
 }
 
 interface activity_dict {
-    [index: string]: activity
+    [isoday: string]: activity
 }
 
 interface act_type_dict {
-    [index: string]: act_type;
+    [name: string]: act_type;
 }
 
 interface act_type {

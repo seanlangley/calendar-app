@@ -4,7 +4,7 @@ import * as native from 'react-native';
 import { mapStateToProps } from '../redux/react_funcs';
 import * as actions from '../redux/actions';
 
-function EditScreen(props: any) {
+export function EditScreen(props: any) {
     const [units, setUnits] = useState<string>("");
     const [name, setName] = useState<string>("");
     const [deleteText, setDeleteText] = useState<string>("");

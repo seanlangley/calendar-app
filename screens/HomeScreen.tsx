@@ -8,7 +8,7 @@ import { SwipeListView } from 'react-native-swipe-list-view';
 
 var styles_g = require('../constants/styles');
 
-function HomeScreen(props: any) {
+export function HomeScreen(props: any) {
     const [newType, setNewType] = useState('');
     const [types, setTypes] = useState<string[]>([]);
 
@@ -57,7 +57,7 @@ function HomeScreen(props: any) {
                             />
                         </View>
                     }
-                    renderHiddenItem={(data, rowMap) => (
+                    renderHiddenItem={(data) => (
                         <View style={styles.rowBack}>
                             <Button
                                 title={'Edit'}
@@ -68,7 +68,8 @@ function HomeScreen(props: any) {
                             />
                         </View>
                     )}
-                /></View>
+                />
+            </View>
         </View>
     );
 }

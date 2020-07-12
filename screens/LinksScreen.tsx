@@ -33,7 +33,7 @@ interface pressed_day {
 
 var activeDays: active_day_dict = {};
 
-function LinksScreen(props: any) {
+export function LinksScreen(props: any) {
     const [isLoading, setLoading] = useState(true);
     const [markedDates, setMarkedDates] = useState<marked_day_dict>({});
     const [numberDone, setNumberDone] = useState("");
@@ -51,15 +51,12 @@ function LinksScreen(props: any) {
 
     return (
         <View style={{ flex: 1 }}>
-            {isLoading ? <ActivityIndicator /> : (
                 <ScrollView style={styles.container} contentContainerStyle={styles.contentContainer}>
-                    {isLoading ? <ActivityIndicator /> : (
                         <Calendar
                             markedDates={markedDates}
                             markingType={'period'}
                             onDayPress={enterManually ? (pressed_day: pressed_day) => setSelectedDay(pressed_day.dateString) : handle_automatic_update}
                         />
-                    )}
                     <native.Switch
                         trackColor={{ false: "white", true: "#81b0ff" }}
                         thumbColor={enterManually ? "blue" : "white"}
@@ -76,6 +73,7 @@ function LinksScreen(props: any) {
                                 placeholder={"Number done"}
                                 value={numberDone}
                                 onChangeText={setNumberDone}
+                                keyboardType={"numeric"}
                             />
                             <Text>{wasDone ? 'Done' : 'Not Done'}</Text>
                             <native.Switch
@@ -103,7 +101,6 @@ function LinksScreen(props: any) {
                         )
                     }
                 </ScrollView>
-            )}
         </View>
     );
 
