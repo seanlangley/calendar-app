@@ -1,26 +1,25 @@
 import {action_types} from './actions';
 
-
-interface activity {
+export interface activity {
     'was_done': boolean;
     'number_done': number;
 }
 
-interface activity_dict {
+export interface activity_dict {
     [isoday: string]: activity
 }
 
-interface act_type_dict {
+export interface act_type_dict {
     [name: string]: act_type;
 }
 
-interface act_type {
+export interface act_type {
     'name': string;
     'acts': activity_dict
     'units'?: string
 }
 
-interface root_state {
+export interface root_state {
     currActType: string;
     actTypes: act_type_dict;
 }
