@@ -23,10 +23,10 @@ export function HomeScreen(props: any) {
     }, [props.actTypes]);
 
     return (
-        <View style={styles.container}>
+        <View style={styles_g.container}>
             <native.TextInput
-                style={styles.textBox}
-                placeholder="New Acvitity Name"
+                style={styles_g.textBox}
+                placeholder="Name"
                 value={newType}
                 onChangeText={setNewType}
             />
@@ -77,10 +77,6 @@ export default connect(mapStateToProps, null)(HomeScreen);
 
 
 const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        backgroundColor: '#fff',
-    },
     rowFront: {
         marginVertical: 8,
         alignItems: 'center',
@@ -102,11 +98,6 @@ const styles = StyleSheet.create({
         justifyContent: 'flex-end',
         paddingLeft: 15,
         paddingRight: 5,
-    },
-    textBox: {
-        height: 40,
-        borderColor: 'gray',
-        borderWidth: 1,
     },
     listContainer: {
         paddingTop: 10,

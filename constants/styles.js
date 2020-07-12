@@ -13,7 +13,11 @@ module.exports = StyleSheet.create({
     },
     textBox: {
         height: 40,
-        borderColor: 'gray',
-        borderWidth: 1,
+        borderColor: '#000000',
+        borderBottomWidth: 1,
     },
+    container: {
+        flex: 1,
+        backgroundColor: '#fff',
+    }
 });
