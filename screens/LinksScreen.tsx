@@ -7,7 +7,6 @@ import { connect } from 'react-redux';
 import { mapStateToProps } from '../redux/react_funcs';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import * as actions from '../redux/actions';
-import {activity} from '../redux/reducers';
 
 var styles_g = require('../constants/styles');
 const moment = require('moment');
@@ -54,11 +53,11 @@ export function LinksScreen(props: any) {
 
     return (
         <KeyboardAwareScrollView
-         style={styles_g.container}
-         contentContainerStyle={styles.contentContainer}
-         keyboardOpeningTime={0}
-         extraHeight={10}
-         >
+            style={styles_g.container}
+            contentContainerStyle={styles.contentContainer}
+            keyboardOpeningTime={10}
+            extraHeight={10}
+        >
             <Calendar
                 markedDates={markedDates}
                 markingType={'period'}
@@ -68,7 +67,7 @@ export function LinksScreen(props: any) {
                 trackColor={{ false: "white", true: "#81b0ff" }}
                 thumbColor={enterManually ? "blue" : "white"}
                 ios_backgroundColor="#3e3e3e"
-                onValueChange={() => {setEnterManually(!enterManually);}}
+                onValueChange={() => { setEnterManually(!enterManually); }}
                 value={enterManually}
             />
             <Text>{enterManually ? "Entering Manually" : "Entering automatically"}</Text>
@@ -102,7 +101,7 @@ export function LinksScreen(props: any) {
                             onPress={() => handle_manual_delete(selectedDay)}
                         />
                     </View>
-                    </View>
+                </View>
             ) : (
                     <View />
                 )
@@ -125,7 +124,7 @@ export function LinksScreen(props: any) {
         let next_color = was_done ? 'green' : 'red';
         let num: number = parseInt(number_done);
         let marked: boolean;
-        if (was_done && Number.isInteger(num) && num > 0){
+        if (was_done && Number.isInteger(num) && num > 0) {
             marked = true;
         }
         else {
