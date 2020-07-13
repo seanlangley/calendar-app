@@ -7,6 +7,7 @@ import { connect } from 'react-redux';
 import { mapStateToProps } from '../redux/react_funcs';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import * as actions from '../redux/actions';
+import {activity} from '../redux/reducers';
 
 var styles_g = require('../constants/styles');
 const moment = require('moment');
@@ -16,6 +17,7 @@ interface marked_day {
     color: string;
     startingDay: boolean;
     endingDay: boolean;
+    marked: boolean;
 }
 interface marked_day_dict {
     [day: string]: marked_day;
@@ -109,7 +111,7 @@ export function LinksScreen(props: any) {
     );
 
     function handle_manual_delete(selectedDay: string) {
-        update_calendar(selectedDay, 'white');
+        update_calendar(selectedDay, 'white', false);
         props.dispatch(actions.postAct({
             day: selectedDay,
             action: 'delete',
@@ -118,15 +120,24 @@ export function LinksScreen(props: any) {
         }))
     }
 
-    function handle_manual_update(selectedDay: string, was_done: boolean, numberDone: string) {
+    function handle_manual_update(selectedDay: string, was_done: boolean, number_done: string) {
         let redux_action = was_done ? 'was_done' : 'not_done';
         let next_color = was_done ? 'green' : 'red';
-        update_calendar(selectedDay, next_color);
+        let num: number = parseInt(number_done);
+        let marked: boolean;
+        if (was_done && Number.isInteger(num) && num > 0){
+            marked = true;
+        }
+        else {
+            marked = false;
+        }
+
+        update_calendar(selectedDay, next_color, marked);
         props.dispatch(actions.postAct({
             day: selectedDay,
             action: redux_action,
             name: props.currActType,
-            number_done: numberDone.length == 0 ? "0" : numberDone
+            number_done: number_done.length == 0 ? "0" : number_done
         }));
     }
 
@@ -151,7 +162,7 @@ export function LinksScreen(props: any) {
         if (post_action == "" || next_color == "") {
             console.error("Invalid configuration");
         }
-        update_calendar(pressed_day.dateString, next_color);
+        update_calendar(pressed_day.dateString, next_color, false);
         props.dispatch(actions.postAct({
             day: pressed_day.dateString,
             action: post_action,
@@ -161,7 +172,7 @@ export function LinksScreen(props: any) {
 
     }
 
-    function update_calendar(selectedDay: string, next_color: string) {
+    function update_calendar(selectedDay: string, next_color: string, marked: boolean) {
         var marked_dates = JSON.parse(JSON.stringify(markedDates));
         var pressed_day = new Date(selectedDay);
         var prev_day = new Date(Math.round(pressed_day.getTime() - msPerDay));
@@ -181,6 +192,7 @@ export function LinksScreen(props: any) {
             'color': next_color,
             'startingDay': is_start_day(pressed_day.getTime()),
             'endingDay': is_end_day(pressed_day.getTime()),
+            'marked': marked,
         };
         setMarkedDates(marked_dates);
 
@@ -213,11 +225,20 @@ export function LinksScreen(props: any) {
         });
 
         Object.keys(data.acts).forEach((day) => {
-            var curr_ms = new Date(day).getTime();
+            let act = data.acts[day];
+            let curr_ms = new Date(day).getTime();
+            let marked: boolean;
+            if (act.was_done && Number.isInteger(act.number_done) && act.number_done > 0) {
+                marked = true;
+            }
+            else {
+                marked = false;
+            }
             marked_dates[day] = {
-                'color': data.acts[day].was_done ? 'green' : 'red',
+                'color': act.was_done ? 'green' : 'red',
                 'startingDay': is_start_day(curr_ms),
                 'endingDay': is_end_day(curr_ms),
+                'marked': marked,
             };
         });
         setMarkedDates(marked_dates);

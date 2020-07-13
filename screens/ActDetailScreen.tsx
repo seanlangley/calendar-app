@@ -58,7 +58,7 @@ function get_month_data(acts: activity_dict): act_data_t {
         if (act.was_done) {
             monthdays_true[curr_day.month()] += 1;
         }
-        if (act.was_done && Number.isInteger(act.number_done) && act.number_done != 0) {
+        if (act.was_done && Number.isInteger(act.number_done) && act.number_done > 0) {
             month_numbers[curr_day.month()] += act.number_done;
         }
         monthdays_recorded[curr_day.month()] += 1;
