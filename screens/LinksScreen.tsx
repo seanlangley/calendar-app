@@ -42,6 +42,7 @@ export function LinksScreen(props: any) {
     const [enterManually, setEnterManually] = useState(false);
     const [wasDone, setWasDone] = useState(false);
     const [selectedDay, setSelectedDay] = useState("");
+    const [recorded, setRecorded] = useState("");
 
     useEffect(() => {
         if (isLoading) {
@@ -61,7 +62,21 @@ export function LinksScreen(props: any) {
             <Calendar
                 markedDates={markedDates}
                 markingType={'period'}
-                onDayPress={enterManually ? (pressed_day: pressed_day) => setSelectedDay(pressed_day.dateString) : handle_automatic_update}
+                onDayPress={(pressed_day: pressed_day) => {
+                    if (enterManually) {
+                        setSelectedDay(pressed_day.dateString)
+                        let act = props.actTypes[props.currActType].acts[pressed_day.dateString];
+                        if (act.was_done && Number.isInteger(act.number_done) && act.number_done > 0) {
+                            setRecorded("Recorded: " + act.number_done.toString());
+                        }
+                        else {
+                            setRecorded("No value recorded");
+                        }
+                    }
+                    else {
+                        handle_automatic_update(pressed_day);
+                    }
+                }}
             />
             <native.Switch
                 trackColor={{ false: "white", true: "#81b0ff" }}
@@ -81,6 +96,7 @@ export function LinksScreen(props: any) {
                         onChangeText={setNumberDone}
                         keyboardType={"numeric"}
                     />
+                    <Text>{recorded}</Text>
                     <Text>{wasDone ? 'Done' : 'Not Done'}</Text>
                     <native.Switch
                         trackColor={{ false: "white", true: "#81b0ff" }}
