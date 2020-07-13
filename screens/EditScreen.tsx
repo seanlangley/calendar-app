@@ -9,6 +9,7 @@ export function EditScreen(props: any) {
     const [name, setName] = useState<string>("");
     const [deleteText, setDeleteText] = useState<string>("");
     const [yesText, setYesText] = useState<string>("");
+    const [hasDefault, setHasDefault] = useState(false);
 
     return (
         <native.View>
@@ -23,6 +24,19 @@ export function EditScreen(props: any) {
                 placeholder="New Name"
                 value={name}
                 onChangeText={setName}
+            />
+            <native.Text>
+                {hasDefault ? "No data will default to not done" :
+                    "No data will not be taken into account"}
+            </native.Text>
+            <native.Switch
+                trackColor={{ false: "white", true: "#81b0ff" }}
+                thumbColor={hasDefault ? "blue" : "white"}
+                ios_backgroundColor="#3e3e3e"
+                onValueChange={() => {
+                    setHasDefault(!hasDefault);
+                }}
+                value={hasDefault}
             />
             <native.Button
                 title={"Submit"}
@@ -51,8 +65,6 @@ export function EditScreen(props: any) {
                     props.navigation.goBack();
                 }}
             />
-
-
         </native.View>
     )
 }
