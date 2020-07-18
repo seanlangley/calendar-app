@@ -15,8 +15,8 @@ export interface act_type_dict {
 
 export interface act_type {
     'name': string;
-    'acts': activity_dict
-    'units'?: string
+    'acts': activity_dict;
+    'units': string;
 }
 
 export interface root_state {
@@ -76,12 +76,19 @@ function manageActTypes(state: act_type_dict = initialState.actTypes,
             var new_act_info: act_type_dict = {}
             new_act_info[action.name] = {
                 name: action.name,
-                acts: {}
+                acts: {},
+                units: "",
             };
             return Object.assign({}, state, new_act_info);
         case action_types.edit_act_type:
             if (action.new_name.length == 0){
                 action.new_name = action.old_name;
+            }
+            if (action.units.length == 0 && state[action.old_name].units == undefined) {
+                action.units = "";
+            }
+            else {
+                action.units = state[action.old_name].units;
             }
             var new_act_types: act_type_dict = Object.assign({}, state);
             var old_acts: activity_dict = Object.assign({}, state[action.old_name].acts);

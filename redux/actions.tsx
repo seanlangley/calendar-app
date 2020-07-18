@@ -68,7 +68,7 @@ export function editActType(new_name: string, old_name: string, units: string){
         old_name: string;
         new_name: string;
         units: string;
-        type: string
+        type: string;
     }
     var returnval: returnval = {
         old_name: old_name,
