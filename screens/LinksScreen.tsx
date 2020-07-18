@@ -72,7 +72,7 @@ export function LinksScreen(props: any) {
                             setRecorded("Recorded: " + act.number_done.toString());
                         }
                         else {
-                            setRecorded("No value recorded");
+                            setRecorded("This day has no recorded value");
                         }
                     }
                     else {
@@ -113,40 +113,44 @@ export function LinksScreen(props: any) {
             <Text>{enterManually ? "Entering Manually" : "Entering automatically"}</Text>
             {enterManually ? (
                 <View>
-                    <Text>{selectedDay}</Text>
-                    <Text>{recorded}</Text>
-                    <Text>{wasDone ? 'Done' : 'Not Done'}</Text>
-                    <native.Switch
-                        trackColor={{ false: "white", true: "#81b0ff" }}
-                        thumbColor={enterManually ? "blue" : "white"}
-                        ios_backgroundColor="#3e3e3e"
-                        onValueChange={() => {
-                            setWasDone(!wasDone);
-                        }}
-                        value={wasDone}
-                    />
-                    {wasDone ? (
-                        <native.TextInput
-                            style={styles_g.textBox}
-                            placeholder={"Number done"}
-                            value={numberDone}
-                            onChangeText={setNumberDone}
-                            keyboardType={"numeric"}
-                        />
-                    ) : (
-                            <View />
-                        )}
+                    {selectedDay == "" ? <Text>{"No day selected"}</Text> : (
+                        <View>
+                            <Text>{selectedDay}</Text>
+                            <Text>{recorded}</Text>
+                            <Text>{wasDone ? 'Done' : 'Not Done'}</Text>
+                            <native.Switch
+                                trackColor={{ false: "white", true: "#81b0ff" }}
+                                thumbColor={enterManually ? "blue" : "white"}
+                                ios_backgroundColor="#3e3e3e"
+                                onValueChange={() => {
+                                    setWasDone(!wasDone);
+                                }}
+                                value={wasDone}
+                            />
+                            {wasDone ? (
+                                <native.TextInput
+                                    style={styles_g.textBox}
+                                    placeholder={"Number done"}
+                                    value={numberDone}
+                                    onChangeText={setNumberDone}
+                                    keyboardType={"numeric"}
+                                />
+                            ) : (
+                                    <View />
+                                )}
 
-                    <View style={styles_g.leftAlign}>
-                        <Button
-                            title={"Submit"}
-                            onPress={() => handle_manual_update(selectedDay, wasDone, numberDone)}
-                        />
-                        <Button
-                            title={"Delete"}
-                            onPress={() => handle_manual_delete(selectedDay)}
-                        />
-                    </View>
+                            <View style={styles_g.leftAlign}>
+                                <Button
+                                    title={"Submit"}
+                                    onPress={() => handle_manual_update(selectedDay, wasDone, numberDone)}
+                                />
+                                <Button
+                                    title={"Delete"}
+                                    onPress={() => handle_manual_delete(selectedDay)}
+                                />
+                            </View>
+                        </View>
+                    )}
                 </View>
             ) : (
                     <View />
