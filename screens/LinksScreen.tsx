@@ -43,6 +43,8 @@ export function LinksScreen(props: any) {
     const [wasDone, setWasDone] = useState(false);
     const [selectedDay, setSelectedDay] = useState("");
     const [recorded, setRecorded] = useState("");
+    const [doneColor, setDoneColor] = useState("green");
+    const [notDoneColor, setNotDoneColor] = useState("red");
 
     useEffect(() => {
         if (isLoading) {
@@ -80,6 +82,29 @@ export function LinksScreen(props: any) {
             />
             <native.Switch
                 trackColor={{ false: "white", true: "#81b0ff" }}
+                thumbColor={doneColor == 'green' ? "blue" : "white"}
+                ios_backgroundColor="#3e3e3e"
+                onValueChange={() => {
+                    let not_done_color = notDoneColor;
+                    let marked_dates: marked_day_dict = JSON.parse(JSON.stringify(markedDates));
+                    Object.keys(marked_dates).forEach(day => {
+                        if (marked_dates[day].color == doneColor) {
+                            marked_dates[day].color = notDoneColor
+                        }
+                        else {
+                            marked_dates[day].color = doneColor;
+                        }
+                    })
+                    setNotDoneColor(doneColor);
+                    setDoneColor(not_done_color);
+                    setMarkedDates(marked_dates);
+                }}
+                value={doneColor == 'green'}
+            />
+            <Text>{"Done is " + doneColor}</Text>
+            <Text>{"Not Done is " + notDoneColor}</Text>
+            <native.Switch
+                trackColor={{ false: "white", true: "#81b0ff" }}
                 thumbColor={enterManually ? "blue" : "white"}
                 ios_backgroundColor="#3e3e3e"
                 onValueChange={() => { setEnterManually(!enterManually); }}
@@ -107,22 +132,20 @@ export function LinksScreen(props: any) {
                         }}
                         value={wasDone}
                     />
-                    <View style={styles_g.leftAlign}>
-                        <Button
-                            title={"Submit"}
-                            onPress={() => handle_manual_update(selectedDay, wasDone, numberDone)}
-                        />
-                        <Button
-                            title={"Delete"}
-                            onPress={() => handle_manual_delete(selectedDay)}
-                        />
-                    </View>
+                    <Button
+                        title={"Submit"}
+                        onPress={() => handle_manual_update(selectedDay, wasDone, numberDone)}
+                    />
+                    <Button
+                        title={"Delete"}
+                        onPress={() => handle_manual_delete(selectedDay)}
+                    />
                 </View>
             ) : (
                     <View />
                 )
             }
-        </KeyboardAwareScrollView>
+        </KeyboardAwareScrollView >
     );
 
     function handle_manual_delete(selectedDay: string) {
@@ -137,7 +160,7 @@ export function LinksScreen(props: any) {
 
     function handle_manual_update(selectedDay: string, was_done: boolean, number_done: string) {
         let redux_action = was_done ? 'was_done' : 'not_done';
-        let next_color = was_done ? 'green' : 'red';
+        let next_color = was_done ? doneColor : notDoneColor;
         let num: number = parseInt(number_done);
         let marked: boolean;
         if (was_done && Number.isInteger(num) && num > 0) {
@@ -163,14 +186,14 @@ export function LinksScreen(props: any) {
         var post_action = "";
         var next_color = "";
         if (curr_color == 'white') {
-            next_color = 'green';
+            next_color = doneColor;
             post_action = "was_done";
         }
-        else if (curr_color == 'green') {
-            next_color = 'red';
+        else if (curr_color == doneColor) {
+            next_color = notDoneColor;
             post_action = "not_done";
         }
-        else if (curr_color == 'red') {
+        else if (curr_color == notDoneColor) {
             next_color = 'white';
             post_action = "delete";
         }
@@ -250,7 +273,7 @@ export function LinksScreen(props: any) {
                 marked = false;
             }
             marked_dates[day] = {
-                'color': act.was_done ? 'green' : 'red',
+                'color': act.was_done ? doneColor : notDoneColor,
                 'startingDay': is_start_day(curr_ms),
                 'endingDay': is_end_day(curr_ms),
                 'marked': marked,
