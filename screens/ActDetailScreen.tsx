@@ -5,11 +5,16 @@ import { ScrollView } from 'react-native-gesture-handler';
 import * as redux from 'react-redux';
 import { mapStateToProps } from '../redux/react_funcs';
 import { root_state, activity_dict } from '../redux/reducers'
-import {Table} from '../components/actTable';
+import {Table, Table_h} from '../components/actTable';
+
+interface act_data_t {
+    boolean_ratios: chart_data[];
+    number_done: chart_data[];
+}
 
 const moment = require('moment');
 moment.locale('en');
-
+let months = moment.monthsShort();
 
 function ActDetailScreen(props: root_state) {
     const [monthData, set_month_data] = useState<chart_data[]>([]);
@@ -17,39 +22,35 @@ function ActDetailScreen(props: root_state) {
     const [weekNumbers, set_week_numbers] = useState<chart_data[]>([]);
     const [monthNumbers, set_month_numbers] = useState<chart_data[]>([]);
     const [domain_state, setDomains] = useState<object[]>([]);
+    const [monthTable, setMonthTable] = useState<[string, number][]>([]);
 
     useEffect(() => {
         let acts = props.actTypes[props.currActType].acts;
         let month_data = get_month_data(acts);
         let week_data = get_week_data(acts);
         let the_data;
-        let domains: object[] = [];
+        let month_table: [string, number][];
         set_month_data(month_data.boolean_ratios);
         set_week_data(week_data.boolean_ratios);
         set_week_numbers(week_data.number_done);
         set_month_numbers(month_data.number_done);
         the_data = [month_data.boolean_ratios, week_data.boolean_ratios,
                         month_data.number_done, week_data.number_done];
-        the_data.forEach((dataset, index) => {
-            let has_nonzero_value = false;
-            dataset.forEach(data => {
-                if (data.value != 0){
-                    has_nonzero_value = true;
-                }
-            });
-            if (has_nonzero_value){
-                domains[index] = {};
-            }
-            else {
-                domains[index] = {y: 1};
-            }
+        setDomains(get_domains(the_data));
+
+        month_table = months.map((month: string, index: number) => {
+            return [
+                month, month_data.boolean_ratios[index].value
+            ];
         });
-        setDomains(domains);
+        setMonthTable(month_table);
+
     }, [props.actTypes[props.currActType].acts]);
+
     return (
         <native.View>
             <ScrollView>
-                <Table />
+                <Table data={monthTable}/>
                 <MonthChart
                     data={monthData}
                     domain={domain_state[0]}
@@ -76,11 +77,6 @@ function ActDetailScreen(props: root_state) {
 }
 
 export default redux.connect(mapStateToProps, null)(ActDetailScreen);
-
-interface act_data_t {
-    boolean_ratios: chart_data[];
-    number_done: chart_data[];
-}
 
 function get_month_data(acts: activity_dict): act_data_t {
     let monthdays_true = Array(12).fill(0, 0, 12);
@@ -153,4 +149,23 @@ function get_week_data(acts: activity_dict): act_data_t {
         }
     }
     return week_data;
+}
+
+function get_domains(the_data: chart_data[][]) {
+    let domains: object[] = [];
+    the_data.forEach((dataset, index) => {
+        let has_nonzero_value = false;
+        dataset.forEach(data => {
+            if (data.value != 0) {
+                has_nonzero_value = true;
+            }
+        });
+        if (has_nonzero_value) {
+            domains[index] = {};
+        }
+        else {
+            domains[index] = { y: 1 };
+        }
+    });
+    return domains;
 }
