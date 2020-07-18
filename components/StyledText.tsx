@@ -11,3 +11,11 @@ export function H1(props: any) {
         fontWeight: 'bold'
     }]} />;
 }
+
+export function P(props: any){
+    return <Text {...props} style={[props.style, {
+        fontSize: 16,
+        fontWeight: 'bold'
+    }]} />;
+
+}

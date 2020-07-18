@@ -81,7 +81,6 @@ export default connect(mapStateToProps, null)(HomeScreen);
 
 const styles = StyleSheet.create({
     formContainer: {
-        backgroundColor: '#77e0e6',
         borderWidth: 1,
         borderStyle: 'solid',
     },

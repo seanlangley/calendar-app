@@ -5,6 +5,7 @@ import { ScrollView } from 'react-native-gesture-handler';
 import * as redux from 'react-redux';
 import { mapStateToProps } from '../redux/react_funcs';
 import { root_state, activity_dict } from '../redux/reducers'
+import {Table} from '../components/actTable';
 
 const moment = require('moment');
 moment.locale('en');
@@ -21,13 +22,14 @@ function ActDetailScreen(props: root_state) {
         let acts = props.actTypes[props.currActType].acts;
         let month_data = get_month_data(acts);
         let week_data = get_week_data(acts);
+        let the_data;
+        let domains: object[] = [];
         set_month_data(month_data.boolean_ratios);
         set_week_data(week_data.boolean_ratios);
         set_week_numbers(week_data.number_done);
         set_month_numbers(month_data.number_done);
-        let the_data = [month_data.boolean_ratios, week_data.boolean_ratios,
+        the_data = [month_data.boolean_ratios, week_data.boolean_ratios,
                         month_data.number_done, week_data.number_done];
-        let domains: object[] = [];
         the_data.forEach((dataset, index) => {
             let has_nonzero_value = false;
             dataset.forEach(data => {
@@ -47,6 +49,7 @@ function ActDetailScreen(props: root_state) {
     return (
         <native.View>
             <ScrollView>
+                <Table />
                 <MonthChart
                     data={monthData}
                     domain={domain_state[0]}

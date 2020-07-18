@@ -7,6 +7,7 @@ import { connect } from 'react-redux';
 import { mapStateToProps } from '../redux/react_funcs';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import * as actions from '../redux/actions';
+import {H1, P} from '../components/StyledText';
 
 var styles_g = require('../constants/styles');
 const moment = require('moment');
@@ -101,8 +102,8 @@ export function LinksScreen(props: any) {
                 }}
                 value={doneColor == 'green'}
             />
-            <Text>{"Done is " + doneColor}</Text>
-            <Text>{"Not Done is " + notDoneColor}</Text>
+            <P>{"Done is " + doneColor}</P>
+            <P>{"Not Done is " + notDoneColor}</P>
             <native.Switch
                 trackColor={{ false: "white", true: "#81b0ff" }}
                 thumbColor={enterManually ? "blue" : "white"}
@@ -110,14 +111,14 @@ export function LinksScreen(props: any) {
                 onValueChange={() => { setEnterManually(!enterManually); }}
                 value={enterManually}
             />
-            <Text>{enterManually ? "Entering Manually" : "Entering automatically"}</Text>
+            <P>{enterManually ? "Entering Manually" : "Entering automatically"}</P>
             {enterManually ? (
                 <View>
-                    {selectedDay == "" ? <Text>{"No day selected"}</Text> : (
+                    {selectedDay == "" ? <P>{"No day selected"}</P> : (
                         <View>
-                            <Text>{selectedDay}</Text>
-                            <Text>{recorded}</Text>
-                            <Text>{wasDone ? 'Done' : 'Not Done'}</Text>
+                            <P>{selectedDay}</P>
+                            <P>{recorded}</P>
+                            <P>{wasDone ? 'Done' : 'Not Done'}</P>
                             <native.Switch
                                 trackColor={{ false: "white", true: "#81b0ff" }}
                                 thumbColor={enterManually ? "blue" : "white"}
