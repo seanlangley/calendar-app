@@ -114,13 +114,6 @@ export function LinksScreen(props: any) {
             {enterManually ? (
                 <View>
                     <Text>{selectedDay}</Text>
-                    <native.TextInput
-                        style={styles_g.textBox}
-                        placeholder={"Number done"}
-                        value={numberDone}
-                        onChangeText={setNumberDone}
-                        keyboardType={"numeric"}
-                    />
                     <Text>{recorded}</Text>
                     <Text>{wasDone ? 'Done' : 'Not Done'}</Text>
                     <native.Switch
@@ -132,14 +125,28 @@ export function LinksScreen(props: any) {
                         }}
                         value={wasDone}
                     />
-                    <Button
-                        title={"Submit"}
-                        onPress={() => handle_manual_update(selectedDay, wasDone, numberDone)}
-                    />
-                    <Button
-                        title={"Delete"}
-                        onPress={() => handle_manual_delete(selectedDay)}
-                    />
+                    {wasDone ? (
+                        <native.TextInput
+                            style={styles_g.textBox}
+                            placeholder={"Number done"}
+                            value={numberDone}
+                            onChangeText={setNumberDone}
+                            keyboardType={"numeric"}
+                        />
+                    ) : (
+                            <View />
+                        )}
+
+                    <View style={styles_g.leftAlign}>
+                        <Button
+                            title={"Submit"}
+                            onPress={() => handle_manual_update(selectedDay, wasDone, numberDone)}
+                        />
+                        <Button
+                            title={"Delete"}
+                            onPress={() => handle_manual_delete(selectedDay)}
+                        />
+                    </View>
                 </View>
             ) : (
                     <View />
