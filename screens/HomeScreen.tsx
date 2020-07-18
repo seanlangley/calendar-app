@@ -24,21 +24,24 @@ export function HomeScreen(props: any) {
 
     return (
         <View style={styles_g.container}>
-            <native.TextInput
-                style={styles_g.textBox}
-                placeholder="Name"
-                value={newType}
-                onChangeText={setNewType}
-            />
-            <View style={styles_g.leftAlign}>
-                <Button
-                    title={"Submit New Activity"}
-                    onPress={() => {
-                        if (types.indexOf(newType) == -1 && newType.length > 0) {
-                            props.dispatch(actions.addActType(newType));
-                        }
-                    }}
+            <View style={styles.formContainer}>
+                <native.TextInput
+                    style={styles_g.textBox}
+                    placeholder="Name"
+                    value={newType}
+                    onChangeText={setNewType}
                 />
+                <View style={styles_g.leftAlign}>
+                    <Button
+                        title={"Submit New Activity"}
+                        onPress={() => {
+                            if (types.indexOf(newType) == -1 && newType.length > 0) {
+                                props.dispatch(actions.addActType(newType));
+                            }
+                            setNewType("");
+                        }}
+                    />
+                </View>
             </View>
             <View style={styles.listContainer}>
                 <SwipeListView
@@ -77,6 +80,11 @@ export default connect(mapStateToProps, null)(HomeScreen);
 
 
 const styles = StyleSheet.create({
+    formContainer: {
+        backgroundColor: '#77e0e6',
+        borderWidth: 1,
+        borderStyle: 'solid',
+    },
     rowFront: {
         marginVertical: 8,
         alignItems: 'center',

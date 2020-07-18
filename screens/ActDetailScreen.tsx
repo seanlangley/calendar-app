@@ -15,6 +15,7 @@ function ActDetailScreen(props: root_state) {
     const [weekData, set_week_data] = useState<chart_data[]>([]);
     const [weekNumbers, set_week_numbers] = useState<chart_data[]>([]);
     const [monthNumbers, set_month_numbers] = useState<chart_data[]>([]);
+    const [domain_state, setDomains] = useState<object[]>([]);
 
     useEffect(() => {
         let acts = props.actTypes[props.currActType].acts;
@@ -24,14 +25,32 @@ function ActDetailScreen(props: root_state) {
         set_week_data(week_data.boolean_ratios);
         set_week_numbers(week_data.number_done);
         set_month_numbers(month_data.number_done);
+        let the_data = [month_data.boolean_ratios, week_data.boolean_ratios,
+                        month_data.number_done, week_data.number_done];
+        let domains: object[] = [];
+        the_data.forEach((dataset, index) => {
+            let has_nonzero_value = false;
+            dataset.forEach(data => {
+                if (data.value != 0){
+                    has_nonzero_value = true;
+                }
+            });
+            if (has_nonzero_value){
+                domains[index] = {};
+            }
+            else {
+                domains[index] = {y: 1};
+            }
+        });
+        setDomains(domains);
     }, [props.actTypes[props.currActType].acts]);
     return (
         <native.View>
             <ScrollView>
-                <MonthChart data={monthData} />
-                <WeekChart data={weekData} />
-                <MonthChart data={monthNumbers}/>
-                <WeekChart data={weekNumbers} />
+                <MonthChart data={monthData} domain={domain_state[0]}/>
+                <WeekChart data={weekData} domain={domain_state[1]}/>
+                <MonthChart data={monthNumbers} domain={domain_state[2]}/>
+                <WeekChart data={weekNumbers} domain={domain_state[3]}/>
             </ScrollView>
         </native.View>
     );

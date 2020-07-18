@@ -66,7 +66,7 @@ export function LinksScreen(props: any) {
                     if (enterManually) {
                         setSelectedDay(pressed_day.dateString)
                         let act = props.actTypes[props.currActType].acts[pressed_day.dateString];
-                        if (act.was_done && Number.isInteger(act.number_done) && act.number_done > 0) {
+                        if (act != undefined && act.was_done && Number.isInteger(act.number_done) && act.number_done > 0) {
                             setRecorded("Recorded: " + act.number_done.toString());
                         }
                         else {
