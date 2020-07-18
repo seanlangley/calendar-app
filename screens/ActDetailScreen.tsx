@@ -47,10 +47,26 @@ function ActDetailScreen(props: root_state) {
     return (
         <native.View>
             <ScrollView>
-                <MonthChart data={monthData} domain={domain_state[0]}/>
-                <WeekChart data={weekData} domain={domain_state[1]}/>
-                <MonthChart data={monthNumbers} domain={domain_state[2]}/>
-                <WeekChart data={weekNumbers} domain={domain_state[3]}/>
+                <MonthChart
+                    data={monthData}
+                    domain={domain_state[0]}
+                    title={"Ratio per month"}
+                />
+                <WeekChart
+                    data={weekData}
+                    domain={domain_state[1]}
+                    title={"Ratio per week"}
+                />
+                <MonthChart
+                    data={monthNumbers}
+                    domain={domain_state[2]}
+                    title={"Number done per month"}
+                />
+                <WeekChart
+                    data={weekNumbers}
+                    domain={domain_state[3]}
+                    title={"Number done per week"}
+                />
             </ScrollView>
         </native.View>
     );
@@ -66,10 +82,10 @@ interface act_data_t {
 function get_month_data(acts: activity_dict): act_data_t {
     let monthdays_true = Array(12).fill(0, 0, 12);
     let monthdays_recorded = Array(12).fill(0, 0, 12);
-    let month_numbers: number[] = Array(12).fill(0,0,12);
+    let month_numbers: number[] = Array(12).fill(0, 0, 12);
     let month_data: act_data_t = {
-        boolean_ratios: Array(12).fill(0,0,12),
-        number_done: Array(12).fill(0,0,12),
+        boolean_ratios: Array(12).fill(0, 0, 12),
+        number_done: Array(12).fill(0, 0, 12),
     }
     Object.keys(acts).forEach(day => {
         let act = acts[day];
@@ -102,10 +118,10 @@ function get_month_data(acts: activity_dict): act_data_t {
 function get_week_data(acts: activity_dict): act_data_t {
     let weekdays_true: number[] = Array(7).fill(0, 0, 7);
     let weekdays_recorded: number[] = Array(7).fill(0, 0, 7);
-    let weekday_numbers: number[] = Array(7).fill(0,0,7);
+    let weekday_numbers: number[] = Array(7).fill(0, 0, 7);
     let week_data: act_data_t = {
-        boolean_ratios: Array(7).fill(0,0,7),
-        number_done: Array(7).fill(0,0,7),
+        boolean_ratios: Array(7).fill(0, 0, 7),
+        number_done: Array(7).fill(0, 0, 7),
     };
     Object.keys(acts).forEach(day => {
         let act = acts[day];

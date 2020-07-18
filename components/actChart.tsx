@@ -1,6 +1,7 @@
-import React, {useEffect, useState} from 'react';
+import React, { useEffect, useState } from 'react';
 import { VictoryBar, VictoryChart, VictoryAxis } from 'victory-native';
 import { View, Text } from 'react-native';
+import { H1 } from '../components/StyledText'
 
 export interface chart_data {
     index: number;
@@ -11,6 +12,7 @@ export interface chart_data {
 interface props {
     data: chart_data[];
     domain: object;
+    title: string;
 }
 
 export function MonthChart(props: props) {
@@ -23,6 +25,7 @@ export function MonthChart(props: props) {
     }
     return (
         <View>
+            <H1>{props.title}</H1>
             <VictoryChart maxDomain={props.domain}>
                 <VictoryAxis
                     tickValues={month_indices}
@@ -52,6 +55,7 @@ export function WeekChart(props: props) {
     }
     return (
         <View>
+            <H1>{props.title}</H1>
             <VictoryChart maxDomain={props.domain}>
                 <VictoryAxis
                     tickValues={week_indices}
