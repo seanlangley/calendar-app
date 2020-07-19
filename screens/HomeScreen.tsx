@@ -45,6 +45,10 @@ export function HomeScreen(props: any) {
             </View>
             <View style={styles.listContainer}>
                 <SwipeListView
+                    previewRowKey={types[0]}
+                    previewOpenValue={-40}
+                    previewOpenDelay={50}
+                    previewDuration={500}
                     data={types}
                     keyExtractor={(item: string) => item}
                     rightOpenValue={-75}
