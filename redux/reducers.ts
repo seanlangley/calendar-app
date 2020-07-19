@@ -1,30 +1,30 @@
 import {action_types} from './actions';
 
-export interface activity {
+export interface activity_t {
     'was_done': boolean;
     'number_done': number;
 }
 
-export interface activity_dict {
-    [isoday: string]: activity
+export interface activity_dict_t {
+    [isoday: string]: activity_t
 }
 
-export interface act_type_dict {
-    [name: string]: act_type;
+export interface act_type_dict_t {
+    [name: string]: act_type_t;
 }
 
-export interface act_type {
+export interface act_type_t {
     'name': string;
-    'acts': activity_dict;
+    'acts': activity_dict_t;
     'units': string;
 }
 
-export interface root_state {
+export interface root_state_t {
     currActType: string;
-    actTypes: act_type_dict;
+    actTypes: act_type_dict_t;
 }
 
-const initialState: root_state = {
+const initialState: root_state_t = {
     currActType: "",
     actTypes: {},
 };
@@ -43,17 +43,17 @@ interface manage_act_list_action {
     was_done: boolean;
     number_done: number;
 }
-function manageActList(state: activity_dict = {}, action: manage_act_list_action): activity_dict{
+function manageActList(state: activity_dict_t = {}, action: manage_act_list_action): activity_dict_t{
     switch(action.type){
         case 'update_act':
-            let new_act: activity_dict = {};
+            let new_act: activity_dict_t = {};
             new_act[action.day] = {
                 was_done: action.was_done,
                 number_done: action.number_done
             };
             return Object.assign({}, state, new_act);
         case 'delete_act':
-            let act_copy: activity_dict = Object.assign({}, state);
+            let act_copy: activity_dict_t = Object.assign({}, state);
             delete act_copy[action.day];
             return act_copy;
         default:
@@ -69,11 +69,11 @@ interface manage_act_types_action {
     units: string;
 }
 
-function manageActTypes(state: act_type_dict = initialState.actTypes,
-                    action: manage_act_types_action): act_type_dict {
+function manageActTypes(state: act_type_dict_t = initialState.actTypes,
+                    action: manage_act_types_action): act_type_dict_t {
     switch (action.type) {
         case 'add_act_type':
-            var new_act_info: act_type_dict = {}
+            var new_act_info: act_type_dict_t = {}
             new_act_info[action.name] = {
                 name: action.name,
                 acts: {},
@@ -90,10 +90,10 @@ function manageActTypes(state: act_type_dict = initialState.actTypes,
             else {
                 action.units = state[action.old_name].units;
             }
-            var new_act_types: act_type_dict = Object.assign({}, state);
-            var old_acts: activity_dict = Object.assign({}, state[action.old_name].acts);
+            var new_act_types: act_type_dict_t = Object.assign({}, state);
+            var old_acts: activity_dict_t = Object.assign({}, state[action.old_name].acts);
             delete new_act_types[action.old_name];
-            var edited_act_type: act_type = {
+            var edited_act_type: act_type_t = {
                 'name': action.new_name,
                 'units': action.units,
                 'acts': old_acts,
@@ -101,12 +101,12 @@ function manageActTypes(state: act_type_dict = initialState.actTypes,
             new_act_types[action.new_name] = edited_act_type;
             return new_act_types;
         case action_types.delete_act_type:
-            var curr_tree: act_type_dict = Object.assign({}, state);
+            var curr_tree: act_type_dict_t = Object.assign({}, state);
             delete curr_tree[action.name];
             return curr_tree;
         case 'update_act':
         case 'delete_act':
-            var acts_of_type: act_type_dict = {};
+            var acts_of_type: act_type_dict_t = {};
             acts_of_type[action.name] = Object.assign({}, state[action.name]);
             acts_of_type[action.name].acts = manageActList(state[action.name].acts, action);
             return Object.assign({}, state, acts_of_type);
@@ -115,7 +115,7 @@ function manageActTypes(state: act_type_dict = initialState.actTypes,
     }
 }
 
-function rootReducer(state: root_state = initialState, action: any) {
+function rootReducer(state: root_state_t = initialState, action: any) {
     switch (action.type) {
         case 'signin':
             return Object.assign({}, state, signIn(action));

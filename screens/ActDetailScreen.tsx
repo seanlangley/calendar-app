@@ -4,7 +4,7 @@ import { MonthChart, WeekChart, chart_data } from '../components/actChart';
 import { ScrollView } from 'react-native-gesture-handler';
 import * as redux from 'react-redux';
 import { mapStateToProps } from '../redux/react_funcs';
-import { root_state, activity_dict } from '../redux/reducers'
+import { root_state_t, activity_dict_t } from '../redux/reducers'
 import {Table, table_data_t} from '../components/actTable';
 
 interface act_data_t {
@@ -17,7 +17,7 @@ moment.locale('en');
 let months = moment.monthsShort();
 let weekdays = moment.weekdaysShort();
 
-function ActDetailScreen(props: root_state) {
+function ActDetailScreen(props: root_state_t) {
     const [monthData, set_month_data] = useState<chart_data[]>([]);
     const [weekData, set_week_data] = useState<chart_data[]>([]);
     const [weekNumbers, set_week_numbers] = useState<chart_data[]>([]);
@@ -69,7 +69,7 @@ function ActDetailScreen(props: root_state) {
 
 export default redux.connect(mapStateToProps, null)(ActDetailScreen);
 
-export function get_month_data(acts: activity_dict): act_data_t {
+export function get_month_data(acts: activity_dict_t): act_data_t {
     let monthdays_true = Array(12).fill(0, 0, 12);
     let monthdays_recorded = Array(12).fill(0, 0, 12);
     let month_numbers: number[] = Array(12).fill(0, 0, 12);
@@ -105,7 +105,7 @@ export function get_month_data(acts: activity_dict): act_data_t {
     return month_data;
 }
 
-export function get_week_data(acts: activity_dict): act_data_t {
+export function get_week_data(acts: activity_dict_t): act_data_t {
     let weekdays_true: number[] = Array(7).fill(0, 0, 7);
     let weekdays_recorded: number[] = Array(7).fill(0, 0, 7);
     let weekday_numbers: number[] = Array(7).fill(0, 0, 7);
