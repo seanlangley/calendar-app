@@ -23,16 +23,12 @@ function ActDetailScreen(props: root_state) {
     const [weekNumbers, set_week_numbers] = useState<chart_data[]>([]);
     const [monthNumbers, set_month_numbers] = useState<chart_data[]>([]);
     const [domain_state, setDomains] = useState<object[]>([]);
-    const [monthTable, setMonthTable] = useState<table_data_t[]>([]);
-    const [weekTable, setWeekTable] = useState<table_data_t[]>([]);
 
     useEffect(() => {
         let acts = props.actTypes[props.currActType].acts;
         let month_data = get_month_data(acts);
         let week_data = get_week_data(acts);
         let the_data;
-        let month_table: table_data_t[];
-        let week_table: table_data_t[];
         set_month_data(month_data.boolean_ratios);
         set_week_data(week_data.boolean_ratios);
         set_week_numbers(week_data.number_done);
@@ -41,54 +37,30 @@ function ActDetailScreen(props: root_state) {
                         month_data.number_done, week_data.number_done];
         setDomains(get_domains(the_data));
 
-        month_table = months.map((month: string, index: number) => {
-            return [
-                month,
-                Math.round(month_data.boolean_ratios[index].value*100) / 100,
-                month_data.number_done[index].value
-            ];
-        });
-        week_table = weekdays.map((day: string, index: number) => {
-            return [
-                day,
-                Math.round(week_data.boolean_ratios[index].value*100) / 100,
-                week_data.number_done[index].value];
-        });
-        setWeekTable(week_table);
-        setMonthTable(month_table);
-
     }, [props.actTypes[props.currActType].acts]);
 
     return (
         <native.View>
             <ScrollView>
-                <Table
-                    data={monthTable}
-                    title={"Month data"}
-                />
-                <Table
-                    data={weekTable}
-                    title={"Week data"}
-                />
                 <MonthChart
                     data={monthData}
                     domain={domain_state[0]}
-                    title={"Ratio per month"}
+                    title={"Done/Recorded per month"}
                 />
                 <WeekChart
                     data={weekData}
                     domain={domain_state[1]}
-                    title={"Ratio per week"}
+                    title={"Done/Recorded per week"}
                 />
                 <MonthChart
                     data={monthNumbers}
                     domain={domain_state[2]}
-                    title={"Number done per month"}
+                    title={"Recorded done per month"}
                 />
                 <WeekChart
                     data={weekNumbers}
                     domain={domain_state[3]}
-                    title={"Number done per week"}
+                    title={"Recorded done per week"}
                 />
             </ScrollView>
         </native.View>
@@ -97,7 +69,7 @@ function ActDetailScreen(props: root_state) {
 
 export default redux.connect(mapStateToProps, null)(ActDetailScreen);
 
-function get_month_data(acts: activity_dict): act_data_t {
+export function get_month_data(acts: activity_dict): act_data_t {
     let monthdays_true = Array(12).fill(0, 0, 12);
     let monthdays_recorded = Array(12).fill(0, 0, 12);
     let month_numbers: number[] = Array(12).fill(0, 0, 12);
@@ -133,7 +105,7 @@ function get_month_data(acts: activity_dict): act_data_t {
     return month_data;
 }
 
-function get_week_data(acts: activity_dict): act_data_t {
+export function get_week_data(acts: activity_dict): act_data_t {
     let weekdays_true: number[] = Array(7).fill(0, 0, 7);
     let weekdays_recorded: number[] = Array(7).fill(0, 0, 7);
     let weekday_numbers: number[] = Array(7).fill(0, 0, 7);

@@ -4,9 +4,9 @@ import {H1, P} from './StyledText'
 
 let styles_g = require('../constants/styles');
 
-export type table_data_t = [string, number, number];
+export type table_data_t = [string, number|string, number|string];
 interface prop_t {
-    data: [string, number, number][];
+    data: table_data_t[];
     title: string;
 }
 
