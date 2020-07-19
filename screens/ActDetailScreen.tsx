@@ -5,7 +5,7 @@ import { ScrollView } from 'react-native-gesture-handler';
 import * as redux from 'react-redux';
 import { mapStateToProps } from '../redux/react_funcs';
 import { root_state, activity_dict } from '../redux/reducers'
-import {Table, Table_h} from '../components/actTable';
+import {Table, table_data_t} from '../components/actTable';
 
 interface act_data_t {
     boolean_ratios: chart_data[];
@@ -15,6 +15,7 @@ interface act_data_t {
 const moment = require('moment');
 moment.locale('en');
 let months = moment.monthsShort();
+let weekdays = moment.weekdaysShort();
 
 function ActDetailScreen(props: root_state) {
     const [monthData, set_month_data] = useState<chart_data[]>([]);
@@ -22,14 +23,16 @@ function ActDetailScreen(props: root_state) {
     const [weekNumbers, set_week_numbers] = useState<chart_data[]>([]);
     const [monthNumbers, set_month_numbers] = useState<chart_data[]>([]);
     const [domain_state, setDomains] = useState<object[]>([]);
-    const [monthTable, setMonthTable] = useState<[string, number][]>([]);
+    const [monthTable, setMonthTable] = useState<table_data_t[]>([]);
+    const [weekTable, setWeekTable] = useState<table_data_t[]>([]);
 
     useEffect(() => {
         let acts = props.actTypes[props.currActType].acts;
         let month_data = get_month_data(acts);
         let week_data = get_week_data(acts);
         let the_data;
-        let month_table: [string, number][];
+        let month_table: table_data_t[];
+        let week_table: table_data_t[];
         set_month_data(month_data.boolean_ratios);
         set_week_data(week_data.boolean_ratios);
         set_week_numbers(week_data.number_done);
@@ -40,9 +43,18 @@ function ActDetailScreen(props: root_state) {
 
         month_table = months.map((month: string, index: number) => {
             return [
-                month, month_data.boolean_ratios[index].value
+                month,
+                Math.round(month_data.boolean_ratios[index].value*100) / 100,
+                month_data.number_done[index].value
             ];
         });
+        week_table = weekdays.map((day: string, index: number) => {
+            return [
+                day,
+                Math.round(week_data.boolean_ratios[index].value*100) / 100,
+                week_data.number_done[index].value];
+        });
+        setWeekTable(week_table);
         setMonthTable(month_table);
 
     }, [props.actTypes[props.currActType].acts]);
@@ -50,7 +62,14 @@ function ActDetailScreen(props: root_state) {
     return (
         <native.View>
             <ScrollView>
-                <Table data={monthTable}/>
+                <Table
+                    data={monthTable}
+                    title={"Month data"}
+                />
+                <Table
+                    data={weekTable}
+                    title={"Week data"}
+                />
                 <MonthChart
                     data={monthData}
                     domain={domain_state[0]}
