@@ -54,9 +54,10 @@ export default function App() {
     store.subscribe(() => setCurrType(store.getState().currActType));
     store.subscribe(() => {
         let nextTree: act_type_dict_t = store.getState().actTypes;
-        if (JSON.stringify(nextTree) !== JSON.stringify(prevTree)) {
+        if (store.getState().should_save) {
             storeData(nextTree);
-            prevTree = nextTree;
+            store.dispatch(actions.setShouldSave(false));
+
         }
     });
 

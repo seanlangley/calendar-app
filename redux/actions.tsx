@@ -2,6 +2,7 @@ export const action_types = {
     set_act_tree: 'set_act_tree',
     edit_act_type: 'edit_act_type',
     delete_act_type: 'delete_act_type',
+    set_should_save: 'set_should_save',
 }
 
 export function signIn(token: any) {
@@ -90,5 +91,12 @@ export function deleteActType(name: string){
     return {
         type: action_types.delete_act_type,
         name: name
+    }
+}
+
+export function setShouldSave(value: boolean){
+    return {
+        type: action_types.set_should_save,
+        value: value,
     }
 }

@@ -73,7 +73,7 @@ export function LinksScreen(props: any) {
                             setRecorded("Recorded: " + act.number_done.toString());
                         }
                         else {
-                            setRecorded("This day has no recorded value");
+                            setRecorded("");
                         }
                     }
                     else {

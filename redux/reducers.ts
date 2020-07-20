@@ -22,11 +22,13 @@ export interface act_type_t {
 export interface root_state_t {
     currActType: string;
     actTypes: act_type_dict_t;
+    should_save: boolean;
 }
 
 const initialState: root_state_t = {
     currActType: "",
     actTypes: {},
+    should_save: false,
 };
 
 
@@ -115,7 +117,7 @@ function manageActTypes(state: act_type_dict_t = initialState.actTypes,
     }
 }
 
-function rootReducer(state: root_state_t = initialState, action: any) {
+function rootReducer(state: root_state_t = initialState, action: any): root_state_t {
     switch (action.type) {
         case 'signin':
             return Object.assign({}, state, signIn(action));
@@ -127,17 +129,22 @@ function rootReducer(state: root_state_t = initialState, action: any) {
             return Object.assign({}, state, {
                 currActType: action.new_act_type
             });
+        case action_types.set_should_save:
+            return Object.assign({}, state, {
+                should_save: action.value,
+            })
         case 'add_act_type':
         case 'update_act':
         case 'delete_act':
         case action_types.edit_act_type:
         case action_types.delete_act_type:
             return Object.assign({}, state, {
-                actTypes: manageActTypes(state.actTypes, action)
+                actTypes: manageActTypes(state.actTypes, action),
+                should_save: true,
             });
         case action_types.set_act_tree:
             return Object.assign({}, state, {
-                actTypes: action.act_tree
+                actTypes: action.act_tree,
             })
         default:
             return state;

@@ -18,6 +18,14 @@ export default function BottomTabNavigator({ navigation, route }: any) {
   return (
     <BottomTab.Navigator initialRouteName={INITIAL_ROUTE_NAME}>
       <BottomTab.Screen
+        name="Calendar"
+        component={LinksScreen}
+        options={{
+          title: 'Calendar',
+          tabBarIcon: ({ focused }) => <TabBarIcon focused={focused} name="md-calendar" />,
+        }}
+      />
+      <BottomTab.Screen
         name="Tables"
         component={ActTableScreen}
         options={{
@@ -31,14 +39,6 @@ export default function BottomTabNavigator({ navigation, route }: any) {
         options={{
           title: 'Charts',
           tabBarIcon: ({ focused }) => <TabBarIcon focused={focused} name="md-analytics" />,
-        }}
-      />
-      <BottomTab.Screen
-        name="Calendar"
-        component={LinksScreen}
-        options={{
-          title: 'Calendar',
-          tabBarIcon: ({ focused }) => <TabBarIcon focused={focused} name="md-calendar" />,
         }}
       />
     </BottomTab.Navigator>
