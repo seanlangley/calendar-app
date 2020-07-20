@@ -12,7 +12,7 @@ import BottomTabNavigator from './navigation/BottomTabNavigator';
 import LinkingConfiguration from './navigation/LinkingConfiguration';
 import HomeScreen from './screens/HomeScreen';
 import EditScreen from './screens/EditScreen';
-import rootReducer from './redux/reducers';
+import rootReducer, {act_type_t, act_type_dict_t} from './redux/reducers';
 import AsyncStorage from '@react-native-community/async-storage';
 import * as actions from './redux/actions';
 
@@ -26,12 +26,7 @@ const store = createStore(rootReducer,
     )
 );
 
-interface ActTree {
-    'name': string;
-    'acts': object;
-}
-
-const storeData = async (value: ActTree) => {
+const storeData = async (value: act_type_dict_t) => {
     try {
         const jsonValue = JSON.stringify(value);
         await AsyncStorage.setItem('@act_tree', jsonValue);
@@ -58,8 +53,8 @@ export default function App() {
     var prevTree: object = store.getState().actTypes;
     store.subscribe(() => setCurrType(store.getState().currActType));
     store.subscribe(() => {
-        var nextTree = store.getState().actTypes;
-        if (nextTree != prevTree) {
+        let nextTree: act_type_dict_t = store.getState().actTypes;
+        if (JSON.stringify(nextTree) !== JSON.stringify(prevTree)) {
             storeData(nextTree);
             prevTree = nextTree;
         }
