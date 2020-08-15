@@ -4,7 +4,7 @@ import {H1, P} from './StyledText'
 
 let styles_g = require('../constants/styles');
 
-export type table_data_t = [string, number|string, number|string];
+export type table_data_t = [string, number|string];
 interface prop_t {
     data: table_data_t[];
     title: string;
@@ -24,7 +24,6 @@ export function Table(props: prop_t) {
                 { /* Edit these as they are your cells. You may even take parameters to display different data / react elements etc. */}
                 <View style={{ flex: 1, alignSelf: 'stretch' }}><P>{data[0]}</P></View>
                 <View style={{ flex: 1, alignSelf: 'stretch' }}><P>{data[1]}</P></View>
-                <View style={{ flex: 1, alignSelf: 'stretch' }}><P>{data[2]}</P></View>
             </View>
         );
     }

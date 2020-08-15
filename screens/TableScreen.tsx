@@ -28,18 +28,16 @@ function ActTableScreen(props: root_state_t) {
         month_table = months.map((month: string, index: number) => {
             return [
                 month,
-                Math.round(month_data.boolean_ratios[index].value * 100) / 100,
                 month_data.number_done[index].value
             ];
         });
-        month_table.unshift(['Month', 'Done/Recorded', 'Total Done']);
+        month_table.unshift(['Month', 'Total Done']);
         week_table = weekdays.map((day: string, index: number) => {
             return [
                 day,
-                Math.round(week_data.boolean_ratios[index].value * 100) / 100,
                 week_data.number_done[index].value];
         });
-        week_table.unshift(['Week', 'Done/Recorded', 'Total Done']);
+        week_table.unshift(['Weekday', 'Total Done']);
         setWeekTable(week_table);
         setMonthTable(month_table);
     }, [props.actTypes[props.currActType].acts]);

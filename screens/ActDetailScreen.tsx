@@ -43,24 +43,14 @@ function ActDetailScreen(props: root_state_t) {
         <native.View>
             <ScrollView>
                 <MonthChart
-                    data={monthData}
-                    domain={domain_state[0]}
-                    title={"Done/Recorded per month"}
-                />
-                <WeekChart
-                    data={weekData}
-                    domain={domain_state[1]}
-                    title={"Done/Recorded per week"}
-                />
-                <MonthChart
                     data={monthNumbers}
                     domain={domain_state[2]}
-                    title={"Recorded done per month"}
+                    title={"Recorded done monthly"}
                 />
                 <WeekChart
                     data={weekNumbers}
                     domain={domain_state[3]}
-                    title={"Recorded done per week"}
+                    title={"Recorded done weekly"}
                 />
             </ScrollView>
         </native.View>
@@ -99,7 +89,7 @@ export function get_month_data(acts: activity_dict_t): act_data_t {
         }
         month_data.number_done[i] = {
             index: i,
-            value: month_numbers[i]
+            value: monthdays_true[i]
         }
     }
     return month_data;
@@ -136,7 +126,7 @@ export function get_week_data(acts: activity_dict_t): act_data_t {
         };
         week_data.number_done[i] = {
             index: i,
-            value: weekday_numbers[i]
+            value: weekdays_true[i]
         }
     }
     return week_data;

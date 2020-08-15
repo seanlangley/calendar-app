@@ -67,7 +67,7 @@ export function HomeScreen(props: any) {
                     renderHiddenItem={(data) => (
                         <View style={styles.rowBack}>
                             <Button
-                                title={'Edit'}
+                                title={'Change Name'}
                                 onPress={() => {
                                     props.dispatch(actions.setActType(data.item));
                                     props.navigation.navigate('EditScreen');

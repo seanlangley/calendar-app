@@ -8,7 +8,6 @@ export interface chart_data {
     value: number;
 }
 
-
 interface props {
     data: chart_data[];
     domain: object;

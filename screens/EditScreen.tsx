@@ -17,12 +17,6 @@ export function EditScreen(props: any) {
         <native.View>
             <native.TextInput
                 style={styles.textBox}
-                placeholder="Units"
-                value={units}
-                onChangeText={setUnits}
-            />
-            <native.TextInput
-                style={styles.textBox}
                 placeholder="New Name"
                 value={name}
                 onChangeText={setName}
@@ -43,7 +37,6 @@ export function EditScreen(props: any) {
                     onPress={() => {
                         setDeleteText("This action is permament. Are you sure?");
                         setYesText("Yes");
-
                     }}
                 />
                 <native.Text style={styles.delete_text}>{deleteText}</native.Text>
