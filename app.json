@@ -1,13 +1,13 @@
 {
     "expo": {
-        "name": "activity_app",
-        "slug": "activity_app",
+        "name": "Routine Planner",
+        "slug": "routine-planner",
         "platforms": [
             "ios",
             "android",
             "web"
         ],
-        "version": "1.0.0",
+        "version": "1.2.1",
         "orientation": "portrait",
         "icon": "./assets/images/icon.png",
         "scheme": "myapp",
@@ -24,7 +24,7 @@
         ],
         "ios": {
             "bundleIdentifier": "com.seanlangley.activityapp",
-            "buildNumber": "1.0.0",
+            "buildNumber": "1.2.1",
             "supportsTablet": true
         },
         "web": {
