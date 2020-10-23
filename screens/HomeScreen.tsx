@@ -31,13 +31,13 @@ export function HomeScreen(props: any) {
             <View style={styles.formContainer}>
                 <TextInput
                     style={styles_g.textBox}
-                    placeholder="Name"
+                    placeholder="Activity Name"
                     value={newType}
                     onChangeText={setNewType}
                 />
                 <View style={styles_g.leftAlign}>
                     <Button
-                        title={"Submit New Activity"}
+                        title={"Submit"}
                         type={"clear"}
                         onPress={() => {
                             if (types.indexOf(newType) == -1 && newType.length > 0) {
