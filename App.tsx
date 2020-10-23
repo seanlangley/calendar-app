@@ -50,7 +50,6 @@ export default function App() {
     const isLoadingComplete = useCachedResources();
     const [currActType, setCurrType] = useState("");
     const [isLoading, setLoading] = useState(true);
-    var prevTree: object = store.getState().actTypes;
     store.subscribe(() => setCurrType(store.getState().currActType));
     store.subscribe(() => {
         let nextTree: act_type_dict_t = store.getState().actTypes;

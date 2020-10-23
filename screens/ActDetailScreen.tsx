@@ -5,7 +5,6 @@ import { ScrollView } from 'react-native-gesture-handler';
 import * as redux from 'react-redux';
 import { mapStateToProps } from '../redux/react_funcs';
 import { root_state_t, activity_dict_t } from '../redux/reducers'
-import {Table, table_data_t} from '../components/actTable';
 
 interface act_data_t {
     boolean_ratios: chart_data[];
@@ -45,12 +44,12 @@ function ActDetailScreen(props: root_state_t) {
                 <MonthChart
                     data={monthNumbers}
                     domain={domain_state[2]}
-                    title={"Recorded done monthly"}
+                    title={"Monthly"}
                 />
                 <WeekChart
                     data={weekNumbers}
                     domain={domain_state[3]}
-                    title={"Recorded done weekly"}
+                    title={"Weekly"}
                 />
             </ScrollView>
         </native.View>

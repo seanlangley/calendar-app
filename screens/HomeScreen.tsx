@@ -1,10 +1,14 @@
 import React, { useEffect, useState } from 'react';
-import { StyleSheet, Text, View, ActivityIndicator, Button } from 'react-native';
-import * as native from 'react-native';
 import { connect } from 'react-redux';
 import * as actions from '../redux/actions';
 import { mapStateToProps } from '../redux/react_funcs';
 import { SwipeListView } from 'react-native-swipe-list-view';
+import { Button } from 'react-native-elements';
+import {
+    TextInput,
+    StyleSheet,
+    View,
+} from 'react-native';
 
 var styles_g = require('../constants/styles');
 
@@ -25,7 +29,7 @@ export function HomeScreen(props: any) {
     return (
         <View style={styles_g.container}>
             <View style={styles.formContainer}>
-                <native.TextInput
+                <TextInput
                     style={styles_g.textBox}
                     placeholder="Name"
                     value={newType}
@@ -34,6 +38,7 @@ export function HomeScreen(props: any) {
                 <View style={styles_g.leftAlign}>
                     <Button
                         title={"Submit New Activity"}
+                        type={"clear"}
                         onPress={() => {
                             if (types.indexOf(newType) == -1 && newType.length > 0) {
                                 props.dispatch(actions.addActType(newType));
@@ -56,6 +61,7 @@ export function HomeScreen(props: any) {
                     renderItem={({ item }) =>
                         <View style={styles.rowFront}>
                             <Button
+                                type={"clear"}
                                 title={item}
                                 onPress={() => {
                                     props.dispatch(actions.setActType(item));
@@ -67,6 +73,7 @@ export function HomeScreen(props: any) {
                     renderHiddenItem={(data) => (
                         <View style={styles.rowBack}>
                             <Button
+                                type={"clear"}
                                 title={'Edit'}
                                 onPress={() => {
                                     props.dispatch(actions.setActType(data.item));

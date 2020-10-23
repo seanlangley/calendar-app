@@ -1,10 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import * as native from 'react-native';
-import { MonthChart, WeekChart, chart_data } from '../components/actChart';
 import { ScrollView } from 'react-native-gesture-handler';
 import * as redux from 'react-redux';
 import { mapStateToProps } from '../redux/react_funcs';
-import { root_state_t, activity_dict_t } from '../redux/reducers'
+import { root_state_t } from '../redux/reducers'
 import { Table, table_data_t } from '../components/actTable';
 import {get_month_data, get_week_data} from './ActDetailScreen';
 
@@ -12,7 +10,6 @@ const moment = require('moment');
 moment.locale('en');
 let months = moment.monthsShort();
 let weekdays = moment.weekdaysShort();
-let styles_g = require('../constants/styles');
 
 function ActTableScreen(props: root_state_t) {
     const [monthTable, setMonthTable] = useState<table_data_t[]>([]);
@@ -46,11 +43,11 @@ function ActTableScreen(props: root_state_t) {
         <ScrollView>
             <Table
                 data={monthTable}
-                title={"Month data"}
+                title={"Monthly"}
             />
             <Table
                 data={weekTable}
-                title={"Week data"}
+                title={"Weekly"}
             />
         </ScrollView>
 

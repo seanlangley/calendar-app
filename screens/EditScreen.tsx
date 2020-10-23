@@ -4,6 +4,7 @@ import * as native from 'react-native';
 import { View } from 'react-native';
 import { mapStateToProps } from '../redux/react_funcs';
 import * as actions from '../redux/actions';
+import { Button } from 'react-native-elements';
 
 let styles_g = require('../constants/styles');
 
@@ -22,7 +23,8 @@ export function EditScreen(props: any) {
                 onChangeText={setName}
             />
             <View style={styles_g.leftAlign}>
-                <native.Button
+                <Button
+                    type={"clear"}
                     title={"Submit"}
                     onPress={() => {
                         if (name != "" || units != "") {
@@ -32,7 +34,8 @@ export function EditScreen(props: any) {
                         }
                     }}
                 />
-                <native.Button
+                <Button
+                    type={"clear"}
                     title={"Delete"}
                     onPress={() => {
                         setDeleteText("This action is permament. Are you sure?");
@@ -40,9 +43,9 @@ export function EditScreen(props: any) {
                     }}
                 />
                 <native.Text style={styles.delete_text}>{deleteText}</native.Text>
-                <native.Button
+                <Button
+                    type={"clear"}
                     title={yesText}
-                    color={'red'}
                     onPress={() => {
                         props.dispatch(actions.deleteActType(props.currActType))
                         props.navigation.goBack();
